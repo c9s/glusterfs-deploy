@@ -2,13 +2,14 @@
 # CREATE N DISKS
 # ===================================
 source ./tasks/gce/config
+set -e
 echo "Creating $N disks..."
 for ((i=1; i<=$N; i++))
 do
     disk="$PREFIX-gluster-$ZONEID-disk-$i"
-    gcloud compute disks create "$disk" \
-        --size $DISK_SIZE \
-        --zone $ZONE \
-        --labels "glusterfs" \
-        --type $DISK_TYPE
+    gcloud compute disks create --quiet "$disk" \
+        --size "$DISK_SIZE" \
+        --zone "$ZONE" \
+        --labels "$DISK_LABELS" \
+        --type "$DISK_TYPE"
 done

@@ -1,6 +1,10 @@
 #!/bin/bash
 source ./tasks/gce/config
+declare -a pids=()
 for instance_id in "${gluster_instances[@]}"
 do
+    echo "$instance_id: deleting instance"
     gcloud compute instances delete -q $instance_id
+    pids+=($!)
 done
+wait "${pids[@]}"

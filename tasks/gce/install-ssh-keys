@@ -4,7 +4,6 @@ set -e
 
 SSHKEY_DIR=keys
 REMOTE_SSHKEY_DIR=keys
-HEKETI_KEY_DIR=/etc/heketi
 
 echo "Setting up gluster node ssh connection ..."
 gcloud compute ssh $heketi_instance --command "mkdir -p $REMOTE_SSHKEY_DIR && (cd $REMOTE_SSHKEY_DIR && ssh-keygen -f id_rsa -t rsa -N '')"

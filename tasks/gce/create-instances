@@ -1,5 +1,6 @@
 #!/bin/bash
 source ./tasks/gce/config
+set -e
 # CREATE N INSTANCES
 # ===================================
 echo "Creating instances: ${gluster_instances[@]}"

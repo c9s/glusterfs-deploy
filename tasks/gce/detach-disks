@@ -1,5 +1,6 @@
 #!/bin/bash
 source ./tasks/gce/config
+declare -a pids=()
 for ((i=1; i<=$N; i++))
 do  
     instance_id=${gluster_instances[$i-1]}
@@ -8,4 +9,6 @@ do
     gcloud compute instances detach-disk $instance_id \
         --disk $disk \
         --zone $ZONE
+    pids+=($!)
 done
+wait "${pids[@]}"
