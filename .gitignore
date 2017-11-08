@@ -1,2 +1,6 @@
 /cache
-/heketi-keys
+heketi-keys*
+heketi.json*
+topology.json*
+topology.patch.json
+/config
