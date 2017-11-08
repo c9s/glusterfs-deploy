@@ -2,24 +2,28 @@
 source ./tasks/gce/config
 set -e
 
+SSHKEY_DIR=keys
+REMOTE_SSHKEY_DIR=keys
+HEKETI_KEY_DIR=/etc/heketi
+
 echo "Setting up gluster node ssh connection ..."
-gcloud compute ssh $heketi_instance --command "mkdir -p heketi-keys && (cd heketi-keys && ssh-keygen -f id_rsa -t rsa -N '')"
-gcloud compute ssh $heketi_instance --command "sudo mkdir -p /etc/heketi \
-        && sudo cp -v heketi-keys/id_rsa* /etc/heketi \
-        && sudo chown -R heketi: /etc/heketi/id_rsa* \
-        && sudo chmod 600 /etc/heketi/id_rsa*"
+gcloud compute ssh $heketi_instance --command "mkdir -p $REMOTE_SSHKEY_DIR && (cd $REMOTE_SSHKEY_DIR && ssh-keygen -f id_rsa -t rsa -N '')"
+gcloud compute ssh $heketi_instance --command "sudo mkdir -p $HEKETI_KEY_DIR \
+        && sudo cp -v $REMOTE_SSHKEY_DIR/id_rsa* $HEKETI_KEY_DIR \
+        && sudo chown -R heketi: $HEKETI_KEY_DIR/id_rsa* \
+        && sudo chmod 600 $HEKETI_KEY_DIR/id_rsa*"
 
 echo "===> Downloading ssh keys from $heketi_instance..."
-rm -rf heketi-keys/
-gcloud compute scp --recurse $heketi_instance:./heketi-keys heketi-keys
+rm -rf $LOCAL_SSHKEY_DIR
+gcloud compute scp --recurse $heketi_instance:./$REMOTE_SSHKEY_DIR $LOCAL_SSHKEY_DIR
 
 echo "===> Generated SSH keys:"
-find heketi-keys -type f
+find $LOCAL_SSHKEY_DIR -type f
 
 for instance_id in "${gluster_instances[@]}"
 do
     echo "$instance_id: Sending public key ..."
-    gcloud compute scp heketi-keys/id_rsa.pub $instance_id:id_rsa.pub
+    gcloud compute scp $LOCAL_SSHKEY_DIR/id_rsa.pub $instance_id:id_rsa.pub
 
     echo "$instance_id: Setting authorized_keys ..."
     gcloud compute ssh $instance_id --command "sudo mkdir -p /root/.ssh && sudo chmod 700 /root/.ssh"
