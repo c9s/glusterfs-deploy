@@ -4,6 +4,8 @@
 source ./tasks/gce/config
 set -e
 echo "Creating $N disks..."
+
+declare -a pids=()
 for ((i=1; i<=$N; i++))
 do
     disk="$PREFIX-gluster-$ZONEID-disk-$i"
@@ -11,5 +13,7 @@ do
         --size "$DISK_SIZE" \
         --zone "$ZONE" \
         --labels "$DISK_LABELS" \
-        --type "$DISK_TYPE"
+        --type "$DISK_TYPE" &
+    pids+=($!)
 done
+wait "${pids[@]}"

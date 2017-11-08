@@ -1,9 +1,11 @@
 #!/bin/bash
 source ./tasks/gce/config
 # detach and delete
+declare -a pids=()
 for ((i=1; i<=$N; i++))
 do
     disk="$PREFIX-gluster-$ZONEID-disk-$i"
-    gcloud compute disks delete --quiet "$disk"
+    gcloud compute disks delete --quiet "$disk" &
+    pids+=($!)
 done
-
+wait "${pids[@]}"
