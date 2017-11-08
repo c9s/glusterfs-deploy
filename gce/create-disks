@@ -1,0 +1,11 @@
+#!/bin/bash
+# CREATE N DISKS
+# ===================================
+echo "Creating $N disks..."
+for ((i=1; i<=$N; i++))
+do
+    gcloud compute disks create "$PREFIX-gluster-$ZONEID-disk-$i" \
+        --size $DISK_SIZE \
+        --zone $ZONE \
+        --type $DISK_TYPE
+done

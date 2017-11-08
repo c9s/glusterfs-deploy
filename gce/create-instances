@@ -1,0 +1,19 @@
+#!/bin/bash
+# CREATE N INSTANCES
+# ===================================
+echo "Creating instances: ${gluster_instances[@]}"
+for instance_id in "${gluster_instances[@]}"
+do
+  # Ignored --subnet "default" (the default network is legacy VPC, which doesn't have subnets)
+  echo "Creating instance $instance_id"
+  gcloud compute instances create "$instance_id" \
+    --boot-disk-device-name "$instance_id" \
+    --boot-disk-size $BOOTDISK_SIZE \
+    --boot-disk-type $BOOTDISK_TYPE \
+    --tags $INSTANCE_TAGS \
+    --image $IMAGE_TYPE \
+    --image-project $IMAGE_PROJECT \
+    --machine-type $MACHINE_TYPE \
+    --maintenance-policy "MIGRATE" \
+    --zone $ZONE
+done
