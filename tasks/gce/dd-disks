@@ -1,0 +1,7 @@
+#!/bin/bash
+source ./tasks/gce/config
+for instance_id in "${gluster_instances[@]}"
+do
+    echo "$instance_id: dd zero /dev/sdb ..."
+    gcloud compute ssh $instance_id --command "sudo dd if=/dev/zero of=/dev/sdb bs=512 count=10"
+done

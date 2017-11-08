@@ -1,0 +1,8 @@
+#!/bin/bash
+source ./tasks/gce/config
+# SETTING UP FIREWALL RULES
+# =====================================
+# https://cloud.google.com/compute/docs/vpc/firewalls
+# https://cloud.google.com/compute/docs/vpc/using-firewalls
+gcloud compute firewall-rules delete --quiet "glusterfs"
+gcloud compute firewall-rules delete --quiet "heketi"

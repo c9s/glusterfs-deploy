@@ -1,0 +1,12 @@
+#!/bin/bash
+source ./tasks/gce/config
+declare -a pids=()
+for instance_id in "${gluster_instances[@]}"
+do
+    echo "$instance_id: Removing packages..."
+    gcloud compute ssh $instance_id \
+        --command "sudo yum remove --assumeyes --quiet centos-release-gluster310 && \
+                sudo yum remove --assumeyes --quiet glusterfs glusterfs-libs glusterfs-server lvm2"
+    pids+=($!)
+done
+wait "${pids[@]}"

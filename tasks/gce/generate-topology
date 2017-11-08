@@ -1,0 +1,36 @@
+#!/bin/bash
+source ./tasks/gce/config
+
+cat <<JSON > topology.json
+{
+    "clusters": [ { "nodes": [ ] } ]
+}
+JSON
+
+for instance_id in "${gluster_instances[@]}"
+do
+    subnet_ip=$(cat cache/$instance_id.json | jq --raw-output '.networkInterfaces[0].networkIP')
+    cat <<PATCH > topology.patch.json
+    [
+        {
+            "op": "add",
+            "path": "/clusters/0/nodes/-",
+            "value": {
+                "node": {
+                    "zone": 1,
+                    "hostnames": {
+                        "manage": [ "$instance_id" ],
+                        "storage": [ "$subnet_ip" ]
+                    }
+                },
+                "devices": [ "/dev/sdb" ]
+            }
+        }
+    ]
+PATCH
+    (cat topology.json | \
+        json-patch -p topology.patch.json | \
+        json_pp > topology.json.new \
+            && mv topology.json.new topology.json)
+done
+cat topology.json

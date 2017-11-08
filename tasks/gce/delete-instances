@@ -1,0 +1,6 @@
+#!/bin/bash
+source ./tasks/gce/config
+for instance_id in "${gluster_instances[@]}"
+do
+    gcloud compute instances delete -q $instance_id
+done

@@ -1,0 +1,14 @@
+#!/bin/bash
+source ./tasks/gce/config
+
+# FORMATTING DISKS
+echo "Formatting disks to xfs..."
+for instance_id in "${gluster_instances[@]}"
+do
+    echo "$instance_id: Formatting /dev/sdb ..."
+    gcloud compute ssh $instance_id --command \
+        "sudo mkfs.xfs -f -i size=512 /dev/sdb \
+            && sudo mkdir -p /data/brick1"
+
+done
+# sudo dd if=/dev/zero of=/dev/sdb bs=512  count=10

@@ -1,0 +1,24 @@
+#!/bin/bash
+source ./tasks/gce/config
+# SETTING UP FIREWALL RULES
+# =====================================
+# https://cloud.google.com/compute/docs/vpc/firewalls
+# https://cloud.google.com/compute/docs/vpc/using-firewalls
+gcloud compute firewall-rules create "glusterfs" \
+    --allow tcp:2222 \
+    --allow tcp:24007 \
+    --allow tcp:24008 \
+    --allow tcp:49152-49251 \
+    --direction "INGRESS" \
+    --priority "1000" \
+    --network "default" \
+    --source-ranges "0.0.0.0/0" \
+    --target-tags "glusterfs"
+
+gcloud compute firewall-rules create "heketi" \
+    --allow tcp:8080 \
+    --direction "INGRESS" \
+    --priority "1000" \
+    --network "default" \
+    --source-ranges "0.0.0.0/0" \
+    --target-tags "heketi"

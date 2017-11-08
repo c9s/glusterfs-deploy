@@ -1,0 +1,28 @@
+#!/bin/bash
+source ./tasks/gce/config
+set -e
+
+echo "Setting up gluster node ssh connection ..."
+gcloud compute ssh $heketi_instance --command "mkdir -p heketi-keys && (cd heketi-keys && ssh-keygen -f id_rsa -t rsa -N '')"
+gcloud compute ssh $heketi_instance --command "sudo mkdir -p /etc/heketi \
+        && sudo cp -v heketi-keys/id_rsa* /etc/heketi \
+        && sudo chown -R heketi: /etc/heketi/id_rsa* \
+        && sudo chmod 600 /etc/heketi/id_rsa*"
+
+echo "===> Downloading ssh keys from $heketi_instance..."
+rm -rf heketi-keys/
+gcloud compute scp --recurse $heketi_instance:./heketi-keys heketi-keys
+
+echo "===> Generated SSH keys:"
+find heketi-keys -type f
+
+for instance_id in "${gluster_instances[@]}"
+do
+    echo "$instance_id: Sending public key ..."
+    gcloud compute scp heketi-keys/id_rsa.pub $instance_id:id_rsa.pub
+
+    echo "$instance_id: Setting authorized_keys ..."
+    gcloud compute ssh $instance_id --command "sudo mkdir -p /root/.ssh && sudo chmod 700 /root/.ssh"
+    gcloud compute ssh $instance_id --command "cat id_rsa.pub | sudo tee --append /root/.ssh/authorized_keys"
+    gcloud compute ssh $instance_id --command "sudo chmod 600 /root/.ssh/authorized_keys"
+done

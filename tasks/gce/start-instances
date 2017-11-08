@@ -1,0 +1,10 @@
+#!/bin/bash
+source ./tasks/gce/config
+declare -a pids=()
+for instance_id in "${gluster_instances[@]}" ; do
+    echo "$instance_id: starting instance ..."
+    gcloud compute instances start $instance_id &
+    pids+=($!)
+done
+echo "Waiting for all instances ready..."
+wait "${pids[@]}"

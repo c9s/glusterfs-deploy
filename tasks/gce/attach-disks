@@ -1,0 +1,14 @@
+#!/bin/bash
+# ATTACH N DISKS TO THE N INSTANCES
+# ===================================
+source ./tasks/gce/config
+echo "Attaching $N disks to the instances..."
+for ((i=1; i<=$N; i++))
+do  
+    instance_id=${gluster_instances[$i-1]}
+    disk="$PREFIX-gluster-$ZONEID-disk-$i"
+    echo "$instance_id: attaching disk $disk ..."
+    gcloud compute instances attach-disk $instance_id \
+        --disk $PREFIX-gluster-$ZONEID-disk-$i \
+        --zone $ZONE
+done  

@@ -1,0 +1,30 @@
+#!/bin/bash
+source ./tasks/gce/config
+set -e
+
+echo "===> Installing json-patch"
+go get -x github.com/evanphx/json-patch/cmd/json-patch
+
+# Setting up heketi.json
+echo "Setting up heketi.json ..."
+gcloud compute scp $heketi_instance:/etc/heketi/heketi.json heketi.json
+cat <<PATCH > heketi.json.patch
+[
+    { "op": "replace", "path": "/glusterfs/sshexec/keyfile", "value": "/etc/heketi/id_rsa" },
+    { "op": "replace", "path": "/glusterfs/sshexec/user", "value": "root" },
+    { "op": "replace", "path": "/glusterfs/sshexec/port", "value": "22" },
+    { "op": "replace", "path": "/glusterfs/sshexec/fstab", "value": "/etc/fstab" },
+    { "op": "replace", "path": "/glusterfs/executor", "value": "ssh" },
+    { "op": "replace", "path": "/jwt/user/key", "value": "secretk3y" },
+    { "op": "replace", "path": "/jwt/admin/key", "value": "secretk3y" }
+]
+PATCH
+mv heketi.json heketi.json.orig
+cat heketi.json.orig | json-patch -p heketi.json.patch | json_pp > heketi.json
+
+gcloud compute scp heketi.json $heketi_instance:./heketi.json
+gcloud compute ssh $heketi_instance --command "sudo cp -v heketi.json /etc/heketi/heketi.json \
+    && sudo chown heketi: /etc/heketi/heketi.json \
+    && sudo systemctl enable heketi \
+    && sudo systemctl restart heketi"
+gcloud compute ssh $heketi_instance --command "curl -s $heketi_instance:8080/hello"

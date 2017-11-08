@@ -1,12 +1,11 @@
 #!/bin/bash
+source ./tasks/gce/config
+set -e
+rm -rf cache
 mkdir -p cache
 for instance_id in "${gluster_instances[@]}"
 do
     gcloud compute instances describe --format json $instance_id > cache/$instance_id.json
-done
-
-for instance_id in "${gluster_instances[@]}"
-do
     cat cache/$instance_id.json | jq --raw-output \
         '["'$instance_id':", .networkInterfaces[0].networkIP, .networkInterfaces[0].accessConfigs[0].natIP] | join(" ")'
 done

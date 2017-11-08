@@ -1,0 +1,5 @@
+#!/bin/bash
+source ./tasks/gce/config
+echo "$heketi_instance: Installing heketi..."
+gcloud compute ssh $heketi_instance --command "sudo yum -y --quiet install heketi heketi-client"
+gcloud compute instances add-tags $heketi_instance --tags heketi --zone $ZONE
