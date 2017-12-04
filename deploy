@@ -17,3 +17,9 @@ set -e
 ./tasks/gce/fetch-instances-info
 ./tasks/gce/generate-topology
 ./tasks/gce/deploy-topology
+
+
+
+
+./tasks/kubernetes/install-glusterfs-client
+./tasks/kubernetes/deploy

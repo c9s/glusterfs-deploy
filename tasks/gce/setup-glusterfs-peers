@@ -11,3 +11,4 @@ do
         --command "sudo gluster peer probe $probe"
 done
 gcloud compute ssh $heketi_instance --command "sudo gluster peer status" | grep State
+echo "Peers setup completed."

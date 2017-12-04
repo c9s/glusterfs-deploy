@@ -31,7 +31,7 @@ fi
 declare -a gluster_instances=()
 for ((i=1; i<=$N; i++))
 do
-  gluster_instances+=("$PREFIX-gluster-instance-$ZONEID-$i")
+  gluster_instances+=("$PREFIX-gluster-$ZONEID-$i")
 done
 declare -a probes
 heketi_instance=${gluster_instances[0]}
