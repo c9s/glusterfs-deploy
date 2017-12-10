@@ -1,0 +1,50 @@
+#!/bin/bash
+source ./tasks/gce/config
+
+# $HEKETI_JWT_USER_SECRET
+# $HEKETI_JWT_ADMIN_SECRET
+ADMIN_SECRET=$(echo -n $HEKETI_JWT_ADMIN_SECRET | base64)
+
+export KUBE_NS=default
+
+mkdir -p deployments/$DEPLOYMENT_ID/kubernetes
+
+cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: heketi-admin-secret
+  namespace: "$KUBE_NS"
+data:
+  key: $ADMIN_SECRET
+type: kubernetes.io/glusterfs
+YAML
+kubectl apply -f deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
+
+echo "deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml is created."
+
+
+HEKETI_IP=$(cat cache/$heketi_instance.json | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
+export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
+
+
+cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: glustersc
+provisioner: kubernetes.io/glusterfs
+parameters:
+  # The IP address of your CGE Instance which is running Heketi
+  resturl: "$HEKETI_CLI_SERVER"
+  restauthenabled: "true"
+  restuser: "admin"
+  secretNamespace: "$KUBE_NS"
+  secretName: "heketi-admin-secret"
+  volumetype: none
+YAML
+kubectl apply -f deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml
+
+echo "deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml is created."

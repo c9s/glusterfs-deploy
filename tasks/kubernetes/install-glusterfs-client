@@ -1,0 +1,15 @@
+#!/bin/bash
+source ./tasks/gce/config
+
+declare -a kube_instances=()
+i=0
+while read instance_id ; do
+    kube_instances+=($instance_id)
+    i=$(($i + 1))
+done < <(kubectl get nodes --no-headers | cut -f1 -d ' ')
+echo "Kubernetes instances: ${kube_instances[@]}"
+
+for instance_id in "${kube_instances[@]}"
+do
+    gcloud compute ssh $instance_id --command "sudo apt-get update && sudo apt-get install -y glusterfs-client"
+done
