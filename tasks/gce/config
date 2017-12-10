@@ -1,4 +1,12 @@
 #!/bin/bash
+if [[ -z "$DEPLOYMENT_ID" ]] ; then
+    echo "DEPLOYMENT_ID is not defined"
+    exit 1
+fi
+
+echo Using DEPLOYMENT_ID=$DEPLOYMENT_ID
+mkdir -p deployments/$DEPLOYMENT_ID
+
 N=3
 PREFIX=example
 
@@ -24,9 +32,13 @@ HEKETI_JWT_USER_SECRET=secretk3y
 HEKETI_JWT_ADMIN_SECRET=secretk3y
 HEKETI_KEY_DIR=/etc/heketi
 
-if [[ -e ./config ]] ; then
-    source ./config
+if [[ ! -e "./deployments/$DEPLOYMENT_ID/config" ]] ; then
+    echo "./deployments/$DEPLOYMENT_ID/config does not exist"
+    exit 1
 fi
+
+echo "Found ./deployments/$DEPLOYMENT_ID/config"
+source ./deployments/$DEPLOYMENT_ID/config
 
 declare -a gluster_instances=()
 for ((i=1; i<=$N; i++))

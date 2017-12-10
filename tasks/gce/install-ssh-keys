@@ -2,7 +2,7 @@
 source ./tasks/gce/config
 set -e
 
-LOCAL_SSHKEY_DIR=keys
+LOCAL_SSHKEY_DIR=deployments/$DEPLOYMENT_ID/keys
 REMOTE_SSHKEY_DIR=keys
 
 echo "Setting up gluster node ssh connection ..."

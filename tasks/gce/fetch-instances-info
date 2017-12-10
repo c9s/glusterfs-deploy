@@ -1,11 +1,11 @@
 #!/bin/bash
 source ./tasks/gce/config
 set -e
-rm -rf cache
-mkdir -p cache
+rm -rf deployments/$DEPLOYMENT_ID/cache
+mkdir -p deployments/$DEPLOYMENT_ID/cache
 for instance_id in "${gluster_instances[@]}"
 do
-    gcloud compute instances describe --format json $instance_id > cache/$instance_id.json
-    cat cache/$instance_id.json | jq --raw-output \
+    gcloud compute instances describe --format json $instance_id > deployments/$DEPLOYMENT_ID/cache/$instance_id.json
+    cat deployments/$DEPLOYMENT_ID/cache/$instance_id.json | jq --raw-output \
         '["'$instance_id':", .networkInterfaces[0].networkIP, .networkInterfaces[0].accessConfigs[0].natIP] | join(" ")'
 done

@@ -1,12 +1,12 @@
 #!/bin/bash
 source ./tasks/gce/config
-HEKETI_IP=$(cat cache/$heketi_instance.json | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
+HEKETI_IP=$(cat deployments/$DEPLOYMENT_ID/cache/$heketi_instance.json | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
 export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
 export HEKETI_SSH_KEYFILE=/etc/heketi/id_rsa
 export HEKETI_SSH_USER=root
 export HEKETI_SSH_PORT=22
 docker run -it --rm --entrypoint heketi-cli \
-    --volume $PWD:/data heketi/heketi \
+    --volume $PWD/deployments/$DEPLOYMENT_ID:/data heketi/heketi \
     --server $HEKETI_CLI_SERVER topology load --json=/data/topology.json
 
 

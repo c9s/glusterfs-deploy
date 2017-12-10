@@ -7,8 +7,8 @@ go get -x github.com/evanphx/json-patch/cmd/json-patch
 
 # Setting up heketi.json
 echo "Setting up heketi.json ..."
-gcloud compute scp $heketi_instance:/etc/heketi/heketi.json heketi.json
-cat <<PATCH > heketi.json.patch
+gcloud compute scp $heketi_instance:/etc/heketi/heketi.json deployments/$DEPLOYMENT_ID/heketi.json
+cat <<PATCH > deployments/$DEPLOYMENT_ID/heketi.json.patch
 [
     { "op": "replace", "path": "/glusterfs/sshexec/keyfile", "value": "$HEKETI_KEY_DIR/id_rsa" },
     { "op": "replace", "path": "/glusterfs/sshexec/user", "value": "root" },
@@ -19,10 +19,12 @@ cat <<PATCH > heketi.json.patch
     { "op": "replace", "path": "/jwt/admin/key", "value": "$HEKETI_JWT_ADMIN_SECRET" }
 ]
 PATCH
-mv heketi.json heketi.json.orig
-cat heketi.json.orig | json-patch -p heketi.json.patch | json_pp > heketi.json
+mv deployments/$DEPLOYMENT_ID/heketi.json deployments/$DEPLOYMENT_ID/heketi.json.orig
+cat deployments/$DEPLOYMENT_ID/heketi.json.orig \
+    | json-patch -p deployments/$DEPLOYMENT_ID/heketi.json.patch \
+    | json_pp > deployments/$DEPLOYMENT_ID/heketi.json
 
-gcloud compute scp heketi.json $heketi_instance:./heketi.json
+gcloud compute scp deployments/$DEPLOYMENT_ID/heketi.json $heketi_instance:./heketi.json
 gcloud compute ssh $heketi_instance --command "sudo cp -v heketi.json $HEKETI_KEY_DIR/heketi.json \
     && sudo chown heketi: $HEKETI_KEY_DIR/heketi.json \
     && sudo systemctl enable heketi \

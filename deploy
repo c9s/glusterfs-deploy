@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+DEPLOYMENT_ID=$1
 # https://github.com/mike-trewartha/gce-gluster-heketi-gke
 # https://github.com/heketi/heketi/wiki/Kubernetes-Integration
 # create instance names
@@ -17,9 +18,6 @@ set -e
 ./tasks/gce/fetch-instances-info
 ./tasks/gce/generate-topology
 ./tasks/gce/deploy-topology
-
-
-
 
 ./tasks/kubernetes/install-glusterfs-client
 ./tasks/kubernetes/deploy
