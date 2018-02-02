@@ -59,4 +59,4 @@ probes=(${probes[@]:1})
 
 TIMESTAMP=$(date "+%s")
 
-source functions.sh
+source lib/functions.sh
