@@ -47,8 +47,11 @@ for ((i=1; i<=$N; i++))
 do
   GLUSTER_INSTANCES+=("$PREFIX-gluster-$ZONEID-$i")
 done
-declare -a probes
+
+
 HEKETI_INSTANCE=${GLUSTER_INSTANCES[0]}
+
+declare -a probes
 probes=(${GLUSTER_INSTANCES[@]})
 # shift is only for zsh
 # shift probes
@@ -56,26 +59,4 @@ probes=(${probes[@]:1})
 
 TIMESTAMP=$(date "+%s")
 
-
-
-
-
-function disk_id()
-{
-  local instance_idx=$1
-  local disk_idx=$2
-  echo "$PREFIX-gluster-$ZONEID-disk-$instance_idx-$disk_idx"
-}
-
-function instance_id()
-{
-  local instance_idx=$1
-  echo "$PREFIX-gluster-$ZONEID-$instance_idx"
-}
-
-function instance_info()
-{
-    local instance_id=$1
-    gcloud compute instances describe --format json $instance_id > deployments/$DEPLOYMENT_ID/cache/$instance_id.json
-    cat deployments/$DEPLOYMENT_ID/cache/$instance_id.json
-}
+source functions.sh
