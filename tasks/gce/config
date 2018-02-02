@@ -48,13 +48,15 @@ do
   GLUSTER_INSTANCES+=("$PREFIX-gluster-$ZONEID-$i")
 done
 declare -a probes
-heketi_instance=${GLUSTER_INSTANCES[0]}
+HEKETI_INSTANCE=${GLUSTER_INSTANCES[0]}
 probes=(${GLUSTER_INSTANCES[@]})
 # shift is only for zsh
 # shift probes
 probes=(${probes[@]:1})
 
 TIMESTAMP=$(date "+%s")
+
+
 
 
 

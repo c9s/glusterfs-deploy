@@ -6,16 +6,16 @@ LOCAL_SSHKEY_DIR=deployments/$DEPLOYMENT_ID/keys
 REMOTE_SSHKEY_DIR=keys
 
 echo "Setting up gluster node ssh connection ..."
-gcloud compute ssh $heketi_instance --command "mkdir -p $REMOTE_SSHKEY_DIR \
+gcloud compute ssh $HEKETI_INSTANCE --command "mkdir -p $REMOTE_SSHKEY_DIR \
     && (cd $REMOTE_SSHKEY_DIR && ssh-keygen -f id_rsa -t rsa -N '')"
-gcloud compute ssh $heketi_instance --command "sudo mkdir -p $HEKETI_KEY_DIR \
+gcloud compute ssh $HEKETI_INSTANCE --command "sudo mkdir -p $HEKETI_KEY_DIR \
         && sudo cp -v $REMOTE_SSHKEY_DIR/id_rsa* $HEKETI_KEY_DIR \
         && sudo chown -R heketi: $HEKETI_KEY_DIR/id_rsa* \
         && sudo chmod 600 $HEKETI_KEY_DIR/id_rsa*"
 
-echo "===> Downloading ssh keys from $heketi_instance..."
+echo "===> Downloading ssh keys from $HEKETI_INSTANCE..."
 rm -rf $LOCAL_SSHKEY_DIR
-gcloud compute scp --recurse $heketi_instance:./$REMOTE_SSHKEY_DIR $LOCAL_SSHKEY_DIR
+gcloud compute scp --recurse $HEKETI_INSTANCE:./$REMOTE_SSHKEY_DIR $LOCAL_SSHKEY_DIR
 
 echo "===> Generated SSH keys:"
 find $LOCAL_SSHKEY_DIR -type f
