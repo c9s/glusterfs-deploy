@@ -3,6 +3,6 @@ source ./tasks/gce/config
 
 # ADD glsuterfs TAG TO THE GLUSTER INSTANCES
 # ===========================================
-for instance_id in "${gluster_instances[@]}" ; do
+for instance_id in "${GLUSTER_INSTANCES[@]}" ; do
     gcloud compute instances add-tags $instance_id --tags $INSTANCE_TAGS
 done

@@ -3,8 +3,8 @@ source ./tasks/gce/config
 set -e
 # CREATE N INSTANCES
 # ===================================
-echo "Creating instances: ${gluster_instances[@]}"
-for instance_id in "${gluster_instances[@]}"
+echo "Creating instances: ${GLUSTER_INSTANCES[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
   # Ignored --subnet "default" (the default network is legacy VPC, which doesn't have subnets)
   echo "Creating instance $instance_id"

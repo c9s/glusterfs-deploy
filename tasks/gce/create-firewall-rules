@@ -13,7 +13,7 @@ gcloud compute firewall-rules create "glusterfs" \
     --priority "1000" \
     --network "default" \
     --source-ranges "0.0.0.0/0" \
-    --target-tags "glusterfs"
+    --target-tags "glusterfs" || true
 
 gcloud compute firewall-rules create "heketi" \
     --allow tcp:8080 \
@@ -21,4 +21,4 @@ gcloud compute firewall-rules create "heketi" \
     --priority "1000" \
     --network "default" \
     --source-ranges "0.0.0.0/0" \
-    --target-tags "heketi"
+    --target-tags "heketi" || true

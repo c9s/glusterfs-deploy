@@ -3,7 +3,7 @@ source ./tasks/gce/config
 set -e
 rm -rf deployments/$DEPLOYMENT_ID/cache
 mkdir -p deployments/$DEPLOYMENT_ID/cache
-for instance_id in "${gluster_instances[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     gcloud compute instances describe --format json $instance_id > deployments/$DEPLOYMENT_ID/cache/$instance_id.json
     cat deployments/$DEPLOYMENT_ID/cache/$instance_id.json | jq --raw-output \

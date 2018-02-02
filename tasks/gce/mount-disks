@@ -1,7 +1,7 @@
 #!/bin/bash
 source ./tasks/gce/config
 # MOUNTING DISKS
-for instance_id in "${gluster_instances[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     gcloud compute ssh $instance_id --command \
             "echo '/dev/sdb /data/brick1 xfs defaults 1 2' | sudo tee --append /etc/fstab \

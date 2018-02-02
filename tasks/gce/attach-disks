@@ -8,7 +8,7 @@ set -e
 echo "Attaching $N disks to the instances..."
 for ((i=1; i<=$N; i++))
 do  
-    instance_id=${gluster_instances[$i-1]}
+    instance_id=${GLUSTER_INSTANCES[$i-1]}
     disk="$PREFIX-gluster-$ZONEID-disk-$i"
     echo "$instance_id: attaching disk $disk ..."
     gcloud compute instances attach-disk --quiet $instance_id \

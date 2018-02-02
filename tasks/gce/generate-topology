@@ -7,9 +7,9 @@ cat <<JSON > deployments/$DEPLOYMENT_ID/topology.json
 }
 JSON
 
-for instance_id in "${gluster_instances[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
-    subnet_ip=$(cat cache/$instance_id.json | jq --raw-output '.networkInterfaces[0].networkIP')
+    subnet_ip=$(cat deployments/$DEPLOYMENT_ID/cache/$instance_id.json | jq --raw-output '.networkInterfaces[0].networkIP')
     cat <<PATCH > deployments/$DEPLOYMENT_ID/topology.patch.json
     [
         {

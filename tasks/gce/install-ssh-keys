@@ -20,7 +20,7 @@ gcloud compute scp --recurse $heketi_instance:./$REMOTE_SSHKEY_DIR $LOCAL_SSHKEY
 echo "===> Generated SSH keys:"
 find $LOCAL_SSHKEY_DIR -type f
 
-for instance_id in "${gluster_instances[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     echo "$instance_id: Sending public key ..."
     gcloud compute scp $LOCAL_SSHKEY_DIR/id_rsa.pub $instance_id:id_rsa.pub

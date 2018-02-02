@@ -3,7 +3,7 @@ source ./tasks/gce/config
 
 # SETTING UP GLUSTER SERVICES
 # =====================================
-for instance_id in "${gluster_instances[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     echo "$instance_id: Installing packages..."
     gcloud compute ssh $instance_id \

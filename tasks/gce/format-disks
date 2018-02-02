@@ -3,7 +3,7 @@ source ./tasks/gce/config
 
 # FORMATTING DISKS
 echo "Formatting disks to xfs..."
-for instance_id in "${gluster_instances[@]}"
+for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     echo "$instance_id: Formatting /dev/sdb ..."
     gcloud compute ssh $instance_id --command \

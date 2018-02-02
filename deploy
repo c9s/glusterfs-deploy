@@ -7,7 +7,8 @@ DEPLOYMENT_ID=$1
 ./tasks/gce/create-disks
 ./tasks/gce/create-instances
 ./tasks/gce/attach-disks
-# source ./tasks/gce/instances-add-tags
+
+# ./tasks/gce/instances-add-tags
 
 ./tasks/gce/create-firewall-rules
 ./tasks/gce/install-glusterfsd

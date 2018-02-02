@@ -2,7 +2,7 @@
 source ./tasks/gce/config
 
 declare -a pids=()
-for instance_id in "${gluster_instances[@]}" ; do
+for instance_id in "${GLUSTER_INSTANCES[@]}" ; do
     echo "$instance_id: stopping instance"
     gcloud compute instances stop $instance_id &
     pids+=($!)
