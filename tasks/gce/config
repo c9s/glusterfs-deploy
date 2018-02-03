@@ -40,31 +40,14 @@ fi
 echo "Found ./deployments/$DEPLOYMENT_ID/config"
 source ./deployments/$DEPLOYMENT_ID/config
 
+source lib/functions.sh
+
 declare -a GLUSTER_INSTANCES=()
+declare -a GLUSTER_PROBE_INSTANCES=()
 
-function init_gluster_instances()
-{
-  for ((i=1; i<=$N; i++))
-  do
-    GLUSTER_INSTANCES+=("$PREFIX-gluster-$ZONEID-$i")
-  done
-}
-
-function choose_heketi_instance()
-{
-    HEKETI_INSTANCE=${GLUSTER_INSTANCES[0]}
-}
-
-init_gluster_instances
-
-choose_heketi_instance
-
-declare -a probes
-probes=(${GLUSTER_INSTANCES[@]})
-# shift is only for zsh
-# shift probes
-probes=(${probes[@]:1})
+glusterfs_init_instance_list
+glusterfs_init_heketi_instance_id
+glusterfs_init_probe_instance_list
 
 TIMESTAMP=$(date "+%s")
 
-source lib/functions.sh

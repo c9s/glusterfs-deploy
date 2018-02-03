@@ -4,7 +4,7 @@ source ./tasks/gce/config
 # CONNECTING PEERS
 # =====================================
 echo "Connecting peers..."
-for probe in "${probes[@]}"
+for probe in "${GLUSTER_PROBE_INSTANCES[@]}"
 do
     echo "$HEKETI_INSTANCE: peer probe $probe..."
     gcloud compute ssh $HEKETI_INSTANCE \
