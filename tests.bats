@@ -13,16 +13,16 @@ source lib/functions.sh
 }
 
 
-@test "instance_id" {
+@test "glusterfs_instance_id" {
   local instance_idx=1
   local disk_id=1
-  local result="$(instance_id 1)"
+  local result="$(glusterfs_instance_id 1)"
   [[ "$result" == "$PREFIX-gluster-$ZONEID-$instance_idx" ]]
 }
 
-@test "instance_info" {
+@test "gcloud_instance_info" {
   local instance_idx=1
-  local result="$(instance_info aurora-dev-gluster-a-1 | jq --raw-output .networkInterfaces[0].kind)"
+  local result="$(gcloud_instance_info aurora-dev-gluster-a-1 | jq --raw-output .networkInterfaces[0].kind)"
   [[ "$result" =~ "networkInterface" ]]
 }
 

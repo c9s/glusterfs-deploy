@@ -1,5 +1,11 @@
 #!/bin/bash
 
+function glusterfs_instance_id()
+{
+  local instance_idx=$1
+  echo "$PREFIX-gluster-$ZONEID-$instance_idx"
+}
+
 # glusterfs_init_instance_list init the gluster instance ID list
 function glusterfs_init_instance_list()
 {

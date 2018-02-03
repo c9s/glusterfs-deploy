@@ -6,14 +6,10 @@ function info()
     echo -e "[\033[32m$component\033[0m] $*" >&2
 }
 
-function gcloud_ssh_command()
-{
-    local instance_id=$1
-    shift
-    gcloud compute ssh $instance_id --command "$*"
-}
 
-source lib/gce/disk.sh
-source lib/gce/instance.sh
-source lib/gce/glusterfs.sh
-source lib/gce/heketi.sh
+__dir__=$(dirname ${BASH_SOURCE[0]})
+source $__dir__/gcloud/ssh.sh
+source $__dir__/gcloud/disk.sh
+source $__dir__/gcloud/instance.sh
+source $__dir__/gcloud/glusterfs.sh
+source $__dir__/gcloud/heketi.sh
