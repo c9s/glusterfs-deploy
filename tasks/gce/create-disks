@@ -8,12 +8,9 @@ echo "Creating $N disks..."
 declare -a pids=()
 for ((i=1; i<=$N; i++))
 do
-    disk="$PREFIX-gluster-$ZONEID-disk-$i"
-    gcloud compute disks create --quiet "$disk" \
-        --size "$DISK_SIZE" \
-        --zone "$ZONE" \
-        --labels "$DISK_LABELS" \
-        --type "$DISK_TYPE" &
+    create_disk "$PREFIX-gluster-$ZONEID-disk-$i" &
     pids+=($!)
 done
+
+echo "Waiting for all disks get ready..."
 wait "${pids[@]}"

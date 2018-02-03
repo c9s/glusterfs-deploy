@@ -30,6 +30,12 @@ function instance_info()
     cat $cache_file
 }
 
+function delete_disk()
+{
+    local disk=$1
+    gcloud compute disks delete --quiet "$disk"
+}
+
 # create_disk "$PREFIX-gluster-$ZONEID-disk-$i"
 function create_disk()
 {
