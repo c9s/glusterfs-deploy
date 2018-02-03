@@ -5,15 +5,5 @@ source ./tasks/gce/config
 # =====================================
 for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
-    echo "$instance_id: Installing packages..."
-    gcloud compute ssh $instance_id \
-        --command "sudo yum install --assumeyes --quiet centos-release-gluster310 && \
-                sudo yum install --assumeyes --quiet glusterfs gluster-cli glusterfs-libs glusterfs-server lvm2"
-
-    echo "$instance_id: Setting up gluster service..."
-    gcloud compute ssh $instance_id --command "sudo setenforce 0 && sudo systemctl enable --now glusterd.service"
-
-    echo "$instance_id: Set permit root login => without password"
-    gcloud compute ssh $instance_id --command "sudo sed -i 's/PermitRootLogin no/PermitRootLogin without-password/g' /etc/ssh/sshd_config && \
-            sudo systemctl restart sshd.service"
+    glusterfs_install_server_on "$instance_id"
 done
