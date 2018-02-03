@@ -10,6 +10,7 @@ mkdir -p deployments/$DEPLOYMENT_ID
 N=3
 PREFIX=example
 
+
 ZONEID=a
 ZONE=asia-east1-$ZONEID
 
@@ -29,7 +30,9 @@ BOOTDISK_TYPE=pd-standard
 BOOTDISK_SIZE=100GB
 
 
-# heketi related config
+#####################################################
+# HEKETI RELATED CONFIG
+#####################################################
 HEKETI_JWT_USER_SECRET=secretk3y
 HEKETI_JWT_ADMIN_SECRET=secretk3y
 HEKETI_KEY_DIR=/etc/heketi

@@ -22,12 +22,10 @@ function glusterfs_init_heketi_instance_id()
 }
 
 
-
 function glusterfs_uninstall_on()
 {
     local instance_id=$1
-    gcloud compute ssh $instance_id \
-        --command "sudo yum remove --assumeyes --quiet centos-release-gluster310 && \
+    gcloud_ssh_command $instance_id "sudo yum remove --assumeyes --quiet centos-release-gluster310 && \
                 sudo yum remove --assumeyes --quiet glusterfs glusterfs-libs glusterfs-server lvm2"
 }
 
