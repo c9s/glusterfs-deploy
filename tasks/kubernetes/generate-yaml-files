@@ -11,7 +11,8 @@ function heketi_generate_kubernetes_secret()
 {
     local kube_ns=default
     local secret=$(echo -n $HEKETI_JWT_ADMIN_SECRET | base64)
-    cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
+    local yaml_file="deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml"
+    cat <<YAML > $yaml_file
 ---
 apiVersion: v1
 kind: Secret
@@ -22,6 +23,7 @@ metadata:
 data:
   key: "$secret"
 YAML
+    echo $yaml_file
 }
 
 function heketi_generate_kubernetes_storageclass()
@@ -40,7 +42,6 @@ function heketi_generate_kubernetes_storageclass()
 
     local kube_ns=default
 
-    info "heketi" "Generating kubernetes storage class yaml file $yaml_file"
     cat <<YAML > $yaml_file
 ---
 apiVersion: storage.k8s.io/v1
@@ -57,11 +58,12 @@ parameters:
   secretName: "heketi-admin-secret"
   volumetype: $volumetype
 YAML
+    echo $yaml_file
 }
 
 HEKETI_IP=$(heketi_get_external_ip "$HEKETI_INSTANCE")
 export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
 
-heketi_generate_kubernetes_secret
-heketi_generate_kubernetes_storageclass glustersc none
-heketi_generate_kubernetes_storageclass slow-many none
+info "heketi" "Generating kubernetes secret file: $(heketi_generate_kubernetes_secret)"
+info "heketi" "Generating kubernetes storage class: $(heketi_generate_kubernetes_storageclass glustersc none)"
+info "heketi" "Generating kubernetes storage class: $(heketi_generate_kubernetes_storageclass slow-many none)"
