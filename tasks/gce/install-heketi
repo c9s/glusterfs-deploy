@@ -1,7 +1,20 @@
 #!/bin/bash
 source ./tasks/gce/config
-echo "$HEKETI_INSTANCE: Installing heketi..."
-gcloud compute ssh $HEKETI_INSTANCE --command "sudo yum -y --quiet install heketi heketi-client"
 
-echo "$HEKETI_INSTANCE: Adding heketi tag..."
-gcloud compute instances add-tags $HEKETI_INSTANCE --tags heketi --zone $ZONE
+function install_heketi_on()
+{
+    local instance_id=$1
+    echo "$instance_id: Installing heketi..." >&2
+    gcloud compute ssh "$instance_id" --command "sudo yum -y --quiet install heketi heketi-client"
+}
+
+function tag_heketi_on()
+{
+    local instance_id=$1
+    local tag=heketi
+    echo "$HEKETI_INSTANCE: Adding heketi tag..." >&2
+    gcloud compute instances add-tags "$instance_id" --tags "$tag" --zone "$ZONE"
+}
+
+install_heketi_on "$HEKETI_INSTANCE"
+tag_heketi_on "$HEKETI_INSTANCE"

@@ -30,3 +30,19 @@ function instance_info()
     cat $cache_file
 }
 
+# create_disk "$PREFIX-gluster-$ZONEID-disk-$i"
+function create_disk()
+{
+    local disk=$1
+    local zone=$ZONE
+
+    if [[ -z "$zone" ]]
+    then
+        zone="asia-east1-a"
+    fi
+    gcloud compute disks create --quiet "$disk" \
+        --zone "$zone" \
+        --size "$DISK_SIZE" \
+        --labels "$DISK_LABELS" \
+        --type "$DISK_TYPE"
+}

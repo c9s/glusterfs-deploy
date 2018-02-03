@@ -40,16 +40,24 @@ fi
 echo "Found ./deployments/$DEPLOYMENT_ID/config"
 source ./deployments/$DEPLOYMENT_ID/config
 
-
-
 declare -a GLUSTER_INSTANCES=()
-for ((i=1; i<=$N; i++))
-do
-  GLUSTER_INSTANCES+=("$PREFIX-gluster-$ZONEID-$i")
-done
 
+function init_gluster_instances()
+{
+  for ((i=1; i<=$N; i++))
+  do
+    GLUSTER_INSTANCES+=("$PREFIX-gluster-$ZONEID-$i")
+  done
+}
 
-HEKETI_INSTANCE=${GLUSTER_INSTANCES[0]}
+function choose_heketi_instance()
+{
+    HEKETI_INSTANCE=${GLUSTER_INSTANCES[0]}
+}
+
+init_gluster_instances
+
+choose_heketi_instance
 
 declare -a probes
 probes=(${GLUSTER_INSTANCES[@]})
