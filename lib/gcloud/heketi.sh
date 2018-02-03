@@ -62,3 +62,13 @@ function heketi_selfcheck()
     info "heketi" "Checking heketi service..."
     gcloud compute ssh $instance_id --command "curl -s $instance_id:8080/hello"
 }
+
+function heketi_get_external_ip()
+{
+    local instance_id=$1
+
+    info "heketi" "Getting external IP from the NAT network interface"
+
+    local ip=$(gcloud_instance_info "$instance_id" | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
+    echo $ip
+}

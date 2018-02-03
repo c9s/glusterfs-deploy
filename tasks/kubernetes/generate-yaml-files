@@ -1,0 +1,67 @@
+#!/bin/bash
+source ./tasks/gce/config
+
+# $HEKETI_JWT_USER_SECRET
+# $HEKETI_JWT_ADMIN_SECRET
+
+
+mkdir -p deployments/$DEPLOYMENT_ID/kubernetes
+
+function heketi_generate_kubernetes_secret()
+{
+    local kube_ns=default
+    local secret=$(echo -n $HEKETI_JWT_ADMIN_SECRET | base64)
+    cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/glusterfs
+metadata:
+  name: heketi-admin-secret
+  namespace: "$kube_ns"
+data:
+  key: "$secret"
+YAML
+}
+
+function heketi_generate_kubernetes_storageclass()
+{
+    local name=$1
+    local volumetype=$2
+
+    if [[ -z "$volumetype" ]]
+    then
+        volumetype=none
+    fi
+    local yaml_file=deployments/$DEPLOYMENT_ID/kubernetes/01-heketi-sc-$name.yml
+
+    local heketi_ip=$(heketi_get_external_ip "$HEKETI_INSTANCE")
+    local heketi_cli_server=http://$heketi_ip:8080
+
+    local kube_ns=default
+
+    info "heketi" "Generating kubernetes storage class yaml file $yaml_file"
+    cat <<YAML > $yaml_file
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: "$name"
+provisioner: kubernetes.io/glusterfs
+parameters:
+  # The IP address of your CGE Instance which is running Heketi
+  resturl: "$heketi_cli_server"
+  restauthenabled: "true"
+  restuser: "admin"
+  secretNamespace: "$kube_ns"
+  secretName: "heketi-admin-secret"
+  volumetype: $volumetype
+YAML
+}
+
+HEKETI_IP=$(heketi_get_external_ip "$HEKETI_INSTANCE")
+export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
+
+heketi_generate_kubernetes_secret
+heketi_generate_kubernetes_storageclass glustersc none
+heketi_generate_kubernetes_storageclass slow-many none

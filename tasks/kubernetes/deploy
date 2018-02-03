@@ -25,9 +25,8 @@ kubectl apply -f deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
 echo "deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml is created."
 
 
-HEKETI_IP=$(cat cache/$HEKETI_INSTANCE.json | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
+HEKETI_IP=$(heketi_get_external_ip "$HEKETI_INSTANCE")
 export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
-
 
 cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml
 ---
