@@ -19,8 +19,8 @@ function delete_disk()
     gcloud compute disks delete --quiet "$disk"
 }
 
-# create_disk "$PREFIX-gluster-$ZONEID-disk-$i"
-function create_disk()
+# gcloud_create_disk "$PREFIX-gluster-$ZONEID-disk-$i"
+function gcloud_create_disk()
 {
     local disk=$1
     local zone=$ZONE
@@ -34,4 +34,11 @@ function create_disk()
         --size "$DISK_SIZE" \
         --labels "$DISK_LABELS" \
         --type "$DISK_TYPE"
+}
+
+function gcloud_dd_disk()
+{
+    local instance_id=$1
+    local device=$1
+    gcloud_ssh_command $instance_id "sudo dd if=/dev/zero of=$device bs=512 count=10"
 }

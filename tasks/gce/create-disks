@@ -8,7 +8,7 @@ echo "Creating $N disks..."
 declare -a pids=()
 for ((i=1; i<=$N; i++))
 do
-    create_disk "$PREFIX-gluster-$ZONEID-disk-$i" &
+    gcloud_create_disk "$PREFIX-gluster-$ZONEID-disk-$i" &
     pids+=($!)
 done
 
