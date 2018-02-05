@@ -6,3 +6,4 @@ source $__dir__/gcloud/disk.sh
 source $__dir__/gcloud/instance.sh
 source $__dir__/gcloud/glusterfs.sh
 source $__dir__/gcloud/heketi.sh
+source $__dir__/kubectl/node.sh

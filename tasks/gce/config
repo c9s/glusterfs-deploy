@@ -11,6 +11,7 @@ N=3
 PREFIX=example
 
 
+GCP_PROJECT=linker-aurora
 ZONEID=a
 ZONE=asia-east1-$ZONEID
 
