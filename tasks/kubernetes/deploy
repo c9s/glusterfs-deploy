@@ -3,47 +3,84 @@ source ./tasks/gce/config
 
 # $HEKETI_JWT_USER_SECRET
 # $HEKETI_JWT_ADMIN_SECRET
-ADMIN_SECRET=$(echo -n $HEKETI_JWT_ADMIN_SECRET | base64)
 
-export KUBE_NS=default
 
 mkdir -p deployments/$DEPLOYMENT_ID/kubernetes
 
-cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
+function heketi_generate_kubernetes_secret()
+{
+    local kube_ns=default
+    local secret=$(echo -n $HEKETI_JWT_ADMIN_SECRET | base64)
+    local yaml_file="deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml"
+    cat <<YAML > $yaml_file
 ---
 apiVersion: v1
 kind: Secret
+type: kubernetes.io/glusterfs
 metadata:
   name: heketi-admin-secret
-  namespace: "$KUBE_NS"
+  namespace: "$kube_ns"
 data:
-  key: $ADMIN_SECRET
-type: kubernetes.io/glusterfs
+  key: "$secret"
 YAML
-kubectl apply -f deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml
+    echo $yaml_file
+}
 
-echo "deployments/$DEPLOYMENT_ID/kubernetes/00_heketi-secret.yml is created."
+function heketi_generate_kubernetes_storageclass()
+{
+    local name=$1
+    local volumetype=$2
 
+    if [[ -z "$volumetype" ]]
+    then
+        volumetype=none
+    fi
+    local yaml_file=deployments/$DEPLOYMENT_ID/kubernetes/01-heketi-sc-$name.yml
 
-HEKETI_IP=$(heketi_get_external_ip "$HEKETI_INSTANCE")
-export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
+    local heketi_ip=$(heketi_get_external_ip "$HEKETI_INSTANCE")
+    local heketi_cli_server=http://$heketi_ip:8080
 
-cat <<YAML > deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml
+    local kube_ns=default
+
+    cat <<YAML > $yaml_file
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: glustersc
+  name: "$name"
 provisioner: kubernetes.io/glusterfs
 parameters:
   # The IP address of your CGE Instance which is running Heketi
-  resturl: "$HEKETI_CLI_SERVER"
+  resturl: "$heketi_cli_server"
   restauthenabled: "true"
   restuser: "admin"
-  secretNamespace: "$KUBE_NS"
+  secretNamespace: "$kube_ns"
   secretName: "heketi-admin-secret"
-  volumetype: none
+  volumetype: $volumetype
 YAML
-kubectl apply -f deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml
+    echo $yaml_file
+}
 
-echo "deployments/$DEPLOYMENT_ID/kubernetes/01_heketi-storageclass.yml is created."
+export HEKETI_IP=$(gcloud_instance_network_ip "$HEKETI_INSTANCE")
+export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
+
+declare -a yaml_files=()
+
+GLUSTERFS_VOLUME_TYPE=none
+
+yaml_file=$(heketi_generate_kubernetes_secret)
+yaml_files+=($yaml_file)
+
+yaml_file=$(heketi_generate_kubernetes_storageclass glustersc $GLUSTERFS_VOLUME_TYPE)
+yaml_files+=($yaml_file)
+
+yaml_file=$(heketi_generate_kubernetes_storageclass slow-many $GLUSTERFS_VOLUME_TYPE)
+yaml_files+=($yaml_file)
+
+yaml_file=$(heketi_generate_kubernetes_storageclass fast-many $GLUSTERFS_VOLUME_TYPE)
+yaml_files+=($yaml_file)
+
+for yaml_file in "${yaml_files[@]}"
+do
+    kubectl apply -f $yaml_file
+done

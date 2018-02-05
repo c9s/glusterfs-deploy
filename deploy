@@ -4,7 +4,6 @@ DEPLOYMENT_ID=$1
 # https://github.com/mike-trewartha/gce-gluster-heketi-gke
 # https://github.com/heketi/heketi/wiki/Kubernetes-Integration
 
-
 # setup the the firewall rules
 ./tasks/gce/create-firewall-rules
 
@@ -26,4 +25,5 @@ DEPLOYMENT_ID=$1
 ./tasks/gce/heketi-deploy-topology
 
 ./tasks/kubernetes/install-glusterfs-client
+./tasks/kubernetes/generate-yaml-files
 ./tasks/kubernetes/deploy
