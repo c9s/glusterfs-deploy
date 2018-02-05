@@ -37,7 +37,7 @@ function heketi_generate_kubernetes_storageclass()
     fi
     local yaml_file=deployments/$DEPLOYMENT_ID/kubernetes/01-heketi-sc-$name.yml
 
-    local heketi_ip=$(heketi_get_external_ip "$HEKETI_INSTANCE")
+    local heketi_ip=$(gcloud_instance_network_ip "$HEKETI_INSTANCE")
     local heketi_cli_server=http://$heketi_ip:8080
 
     local kube_ns=default
@@ -60,9 +60,6 @@ parameters:
 YAML
     echo $yaml_file
 }
-
-export HEKETI_IP=$(gcloud_instance_network_ip "$HEKETI_INSTANCE")
-export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
 
 declare -a yaml_files=()
 
