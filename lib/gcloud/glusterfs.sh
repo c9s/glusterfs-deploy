@@ -50,3 +50,12 @@ function glusterfs_install_server_on()
     gcloud_ssh_command $instance_id "sudo sed -i 's/PermitRootLogin no/PermitRootLogin without-password/g' /etc/ssh/sshd_config && \
             sudo systemctl restart sshd.service"
 }
+
+function glusterfs_peer_probe()
+{
+    local instance_id=$1
+    local probe_instance_id=$2
+    info "$HEKETI_INSTANCE" "peer probe $probe ..."
+    gcloud_ssh_command "$instance_id" \
+        "sudo gluster peer probe ${probe_instance_id}"
+}

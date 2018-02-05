@@ -1,14 +1,13 @@
 #!/bin/bash
 source ./tasks/gce/config
 
+
 # CONNECTING PEERS
 # =====================================
 echo "Connecting peers..."
 for probe in "${GLUSTER_PROBE_INSTANCES[@]}"
 do
-    echo "$HEKETI_INSTANCE: peer probe $probe..."
-    gcloud compute ssh $HEKETI_INSTANCE \
-        --command "sudo gluster peer probe $probe"
+    glusterfs_peer_probe "$HEKETI_INSTANCE" "$probe"
 done
 gcloud compute ssh $HEKETI_INSTANCE --command "sudo gluster peer status" | grep State
 echo "Peers setup completed."

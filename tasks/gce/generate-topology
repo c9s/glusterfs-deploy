@@ -1,6 +1,15 @@
 #!/bin/bash
 source ./tasks/gce/config
 
+declare -a DEVICE_PATHS=()
+
+for ((i=1 ; i <= $NUM_DISK_PER_INSTANCE ; i++))
+do
+    DEVICE_PATHS+=($(printf '"%s"' "/dev/disk/by-id/google-persistent-disk-$i"))
+done
+
+
+
 cat <<JSON > deployments/$DEPLOYMENT_ID/topology.json
 {
     "clusters": [ { "nodes": [ ] } ]
@@ -19,11 +28,13 @@ do
                 "node": {
                     "zone": 1,
                     "hostnames": {
-                        "manage": [ "$instance_id" ],
-                        "storage": [ "$subnet_ip" ]
+                        "manage": ["$instance_id"],
+                        "storage": ["$subnet_ip"]
                     }
                 },
-                "devices": [ "/dev/sdb" ]
+                "devices": [
+                    $(perl -e '$s = shift @ARGV; print join($s, @ARGV);' "," "${DEVICE_PATHS[@]}")
+                ]
             }
         }
     ]

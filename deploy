@@ -3,20 +3,30 @@ set -e
 DEPLOYMENT_ID=$1
 # https://github.com/mike-trewartha/gce-gluster-heketi-gke
 # https://github.com/heketi/heketi/wiki/Kubernetes-Integration
-# create instance names
-./tasks/gce/create-disks
+
+
+# setup the the firewall rules
+./tasks/gce/create-firewall-rules
+
+# prepare the instances
 ./tasks/gce/create-instances
+./tasks/gce/instances-add-tags
+
+# prepare the glusterfs disks
+./tasks/gce/create-disks
 ./tasks/gce/attach-disks
 
-# ./tasks/gce/instances-add-tags
 
-./tasks/gce/create-firewall-rules
 ./tasks/gce/install-glusterfsd
+
 ./tasks/gce/setup-glusterfs-peers
+
 ./tasks/gce/install-heketi
+
 ./tasks/gce/install-ssh-keys
+
 ./tasks/gce/deploy-heketi
-./tasks/gce/fetch-instances-info
+
 ./tasks/gce/generate-topology
 ./tasks/gce/deploy-topology
 

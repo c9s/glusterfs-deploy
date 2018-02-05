@@ -4,15 +4,17 @@
 source ./tasks/gce/config
 
 set -e
-echo "Attaching $N disks to the instances..."
+echo "Attaching $NUM_DISK_PER_INSTANCE disks to the $N instances..."
 for ((i=1; i<=$N; i++))
 do  
     instance_id=${GLUSTER_INSTANCES[$i-1]}
-    disk="$PREFIX-gluster-$ZONEID-disk-$i"
-    echo "$instance_id: attaching disk $disk ..."
-    gcloud compute instances attach-disk --quiet $instance_id \
-        --mode "rw" \
-        --device-name "sdb" \
-        --zone "$ZONE" \
-        --disk "$disk"
+    for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
+    do
+        disk=$(gcloud_disk_name $i $di)
+        info "$instance_id" "Attaching disk $disk..."
+        gcloud compute instances attach-disk --quiet $instance_id \
+            --mode "rw" \
+            --zone "$ZONE" \
+            --disk "$disk"
+    done
 done  

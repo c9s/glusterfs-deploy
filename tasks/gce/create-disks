@@ -3,13 +3,18 @@
 # ===================================
 source ./tasks/gce/config
 set -e
-echo "Creating $N disks..."
+
+
+echo "Creating $NUM_DISK_PER_INSTANCE disks on $N instances..."
 
 declare -a pids=()
 for ((i=1; i<=$N; i++))
 do
-    gcloud_create_disk "$PREFIX-gluster-$ZONEID-disk-$i" &
-    pids+=($!)
+    for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
+    do
+        gcloud_create_disk "$(gcloud_disk_name $i $di)" &
+        pids+=($!)
+    done
 done
 
 echo "Waiting for all disks get ready..."

@@ -1,16 +1,9 @@
 #!/bin/bash
-
-function disk_id()
+function gcloud_disk_name()
 {
-  local instance_idx=$1
-  local disk_idx=$2
-
-  if [[ -z "$ZONEID" ]]
-  then
-    exit -1
-  fi
-
-  echo "$PREFIX-gluster-$ZONEID-disk-$instance_idx-$disk_idx"
+    local instance_idx=$1
+    local disk_idx=$2
+    echo "$PREFIX-gluster-$ZONEID-disk-$instance_idx-$di"
 }
 
 function delete_disk()
@@ -33,7 +26,7 @@ function gcloud_create_disk()
         --zone "$zone" \
         --size "$DISK_SIZE" \
         --labels "$DISK_LABELS" \
-        --type "$DISK_TYPE"
+        --type "$DISK_TYPE" > /dev/null
 }
 
 function gcloud_dd_disk()
