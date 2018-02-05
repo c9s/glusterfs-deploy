@@ -71,6 +71,9 @@ yaml_files+=($yaml_file)
 yaml_file=$(heketi_generate_kubernetes_storageclass glustersc $GLUSTERFS_VOLUME_TYPE)
 yaml_files+=($yaml_file)
 
+yaml_file=$(heketi_generate_kubernetes_storageclass slow $GLUSTERFS_VOLUME_TYPE)
+yaml_files+=($yaml_file)
+
 yaml_file=$(heketi_generate_kubernetes_storageclass slow-many $GLUSTERFS_VOLUME_TYPE)
 yaml_files+=($yaml_file)
 
