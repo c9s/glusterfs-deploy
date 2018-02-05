@@ -56,6 +56,9 @@ function glusterfs_install_client_on()
     local instance=$1
     info "$instance" "Installing glusterfs client..."
     gcloud_ssh_command "$instance" "sudo apt-get update -q && sudo apt-get install -q -y glusterfs-client"
+
+    info "kubectl" "Labeling glusterfs client nodes..."
+    kubectl label --overwrite node "$instance" glusterfs=client
 }
 
 function glusterfs_peer_probe()
