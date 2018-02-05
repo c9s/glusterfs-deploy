@@ -1,3 +1,16 @@
+#!/bin/bash
+
+function gcloud_instance_external_ip()
+{
+    local instance=$1
+    gcloud_instance_info $instance | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP'
+}
+
+function gcloud_instance_network_ip()
+{
+    local instance=$1
+    gcloud_instance_info $instance | jq --raw-output '.networkInterfaces[0].networkIP'
+}
 
 
 function gcloud_instance_info()

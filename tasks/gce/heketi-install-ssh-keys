@@ -13,7 +13,6 @@ gcloud compute ssh $HEKETI_INSTANCE --command "sudo mkdir -p $HEKETI_KEY_DIR \
         && sudo chown -R heketi: $HEKETI_KEY_DIR/id_rsa* \
         && sudo chmod 600 $HEKETI_KEY_DIR/id_rsa*"
 
-
 echo "===> Cleaning up $LOCAL_SSHKEY_DIR"
 rm -rf $LOCAL_SSHKEY_DIR
 

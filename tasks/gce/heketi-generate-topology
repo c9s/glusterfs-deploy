@@ -1,0 +1,50 @@
+#!/bin/bash
+source ./tasks/gce/config
+
+declare -a device_paths=()
+
+for ((i=1 ; i <= $NUM_DISK_PER_INSTANCE ; i++))
+do
+    device_paths+=($(printf '"%s"' "/dev/disk/by-id/google-persistent-disk-$i"))
+done
+
+
+
+cat <<JSON > deployments/$DEPLOYMENT_ID/topology.json
+{
+    "clusters": [ { "nodes": [ ] } ]
+}
+JSON
+
+for instance_id in "${GLUSTER_INSTANCES[@]}"
+do
+    subnet_ip=$(gcloud_instance_info $instance_id | jq --raw-output '.networkInterfaces[0].networkIP')
+    patch_file=$(mktemp /tmp/patch.json.XXX)
+    cat <<PATCH > $patch_file
+    [
+        {
+            "op": "add",
+            "path": "/clusters/0/nodes/-",
+            "value": {
+                "node": {
+                    "zone": 1,
+                    "hostnames": {
+                        "manage": ["$instance_id"],
+                        "storage": ["$subnet_ip"]
+                    }
+                },
+                "devices": [
+                    $(perl -e '$s = shift @ARGV; print join($s, @ARGV);' "," "${device_paths[@]}")
+                ]
+            }
+        }
+    ]
+PATCH
+    tmp_file=$(mktemp /tmp/topology.json.XXX)
+
+    cat $(asset topology.json) \
+        | json-patch -p $patch_file \
+        | json_pp > $tmp_file
+    mv -v $tmp_file $(asset topology.json)
+done
+cat $(asset topology.json)

@@ -16,19 +16,14 @@ DEPLOYMENT_ID=$1
 ./tasks/gce/create-disks
 ./tasks/gce/attach-disks
 
-
 ./tasks/gce/install-glusterfsd
-
 ./tasks/gce/setup-glusterfs-peers
 
-./tasks/gce/install-heketi
-
-./tasks/gce/install-ssh-keys
-
-./tasks/gce/deploy-heketi
-
-./tasks/gce/generate-topology
-./tasks/gce/deploy-topology
+./tasks/gce/heketi-install
+./tasks/gce/heketi-install-ssh-keys
+./tasks/gce/heketi-configure
+./tasks/gce/heketi-generate-topology
+./tasks/gce/heketi-deploy-topology
 
 ./tasks/kubernetes/install-glusterfs-client
 ./tasks/kubernetes/deploy
