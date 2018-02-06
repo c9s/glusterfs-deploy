@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-DEPLOYMENT_ID=$1
+export DEPLOYMENT_ID=$1
 # https://github.com/mike-trewartha/gce-gluster-heketi-gke
 # https://github.com/heketi/heketi/wiki/Kubernetes-Integration
 
@@ -25,5 +25,4 @@ DEPLOYMENT_ID=$1
 ./tasks/gce/heketi-deploy-topology
 
 ./tasks/kubernetes/install-glusterfs-client
-./tasks/kubernetes/generate-yaml-files
 ./tasks/kubernetes/deploy
