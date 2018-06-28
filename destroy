@@ -1,5 +1,5 @@
 #!/bin/bash
-./tasks/gce/delete-firewall-rules
+# ./tasks/gce/delete-firewall-rules
 ./tasks/gce/uninstall-glusterfsd
 ./tasks/gce/detach-disks
 ./tasks/gce/stop-instances
