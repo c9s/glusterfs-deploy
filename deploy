@@ -23,6 +23,3 @@ export DEPLOYMENT_ID=$1
 ./tasks/gce/heketi-configure
 ./tasks/gce/heketi-generate-topology
 ./tasks/gce/heketi-deploy-topology
-
-./tasks/kubernetes/install-glusterfs-client
-./tasks/kubernetes/deploy

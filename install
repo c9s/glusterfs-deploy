@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+export DEPLOYMENT_ID=$1
+./tasks/kubernetes/install-glusterfs-client
+./tasks/kubernetes/deploy
