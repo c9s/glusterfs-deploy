@@ -18,8 +18,9 @@ do
     do
         disk_name=$(gcloud:disk_name $i $di)
         if [[ "${diskMap[$disk_name]}" == "1" ]] ; then
-            echo "disk $disk_name already exists, skip"
+            echo "Disk $disk_name already exists, skip"
         else
+            echo "Creating disk $disk_name with size $DISK_SIZE"
             gcloud:create_disk "$disk_name" \
                 --size $DISK_SIZE \
                 --labels $DISK_LABELS \
