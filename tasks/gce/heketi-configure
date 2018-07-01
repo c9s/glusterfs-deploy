@@ -7,7 +7,7 @@ go get -x github.com/evanphx/json-patch/cmd/json-patch
 
 heketi_json_file="deployments/$DEPLOYMENT_ID/heketi.json"
 
-heketi_get_config_file "$HEKETI_INSTANCE" "$heketi_json_file"
-heketi_patch_config_file "$heketi_json_file"
-heketi_put_config_file "$HEKETI_INSTANCE" "$heketi_json_file"
-heketi_selfcheck "$HEKETI_INSTANCE"
+heketi:get_config_file "$HEKETI_INSTANCE" "$heketi_json_file"
+heketi:patch_config_file "$heketi_json_file"
+heketi:put_config_file "$HEKETI_INSTANCE" "$heketi_json_file"
+heketi:selfcheck "$HEKETI_INSTANCE"

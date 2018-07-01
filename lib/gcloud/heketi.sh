@@ -5,7 +5,7 @@ function heketi_init_instance_id()
     HEKETI_INSTANCE=$1
 }
 
-function heketi_get_config_file()
+function heketi:get_config_file()
 {
     local instance_id=$1
     local target=$2
@@ -14,7 +14,7 @@ function heketi_get_config_file()
 }
 
 
-function heketi_put_config_file()
+function heketi:put_config_file()
 {
     local instance_id=$1
     local target=$2
@@ -30,7 +30,7 @@ function heketi_put_config_file()
 }
 
 
-function heketi_patch_config_file()
+function heketi:patch_config_file()
 {
     local target=$1
     local patch_file=$(mktemp /tmp/heketi-json-patch.XXXXXX)
@@ -56,7 +56,7 @@ PATCH
     mv $tmp_config_file $target
 }
 
-function heketi_selfcheck()
+function heketi:selfcheck()
 {
     local instance_id=$1
     info "heketi" "Checking heketi service..."
