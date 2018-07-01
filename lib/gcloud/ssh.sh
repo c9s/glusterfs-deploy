@@ -1,5 +1,5 @@
 #!/bin/bash
-function gcloud_ssh_command()
+function gcloud:ssh_command()
 {
     local instance_id=$1
     shift

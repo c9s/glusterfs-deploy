@@ -6,7 +6,7 @@ function heketi_install_on()
     local instance_id=$1
 
     info "$instance_id: Installing heketi..."
-    gcloud_ssh_command "$instance_id" "sudo yum -y --quiet install heketi heketi-client"
+    gcloud:ssh_command "$instance_id" "sudo yum -y --quiet install heketi heketi-client"
 }
 
 function gcloud_instance_tag()
