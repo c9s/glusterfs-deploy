@@ -10,7 +10,7 @@ do
     instance_id=${GLUSTER_INSTANCES[$i-1]}
     for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
     do
-        disk=$(gcloud_disk_name $i $di)
+        disk=$(gcloud:disk_name $i $di)
         info "$instance_id" "Attaching disk $disk..."
         gcloud compute instances attach-disk --quiet $instance_id \
             --mode "rw" \

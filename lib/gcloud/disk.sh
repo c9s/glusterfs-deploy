@@ -1,5 +1,5 @@
 #!/bin/bash
-function gcloud_disk_name()
+function gcloud:disk_name()
 {
     local instance_idx=$1
     local disk_idx=$2
