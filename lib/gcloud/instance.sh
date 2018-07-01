@@ -1,19 +1,19 @@
 #!/bin/bash
 
-function gcloud_instance_external_ip()
+function gcloud:instance_external_ip()
 {
     local instance=$1
-    gcloud_instance_info $instance | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP'
+    gcloud:instance_info $instance | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP'
 }
 
 function gcloud_instance_network_ip()
 {
     local instance=$1
-    gcloud_instance_info $instance | jq --raw-output '.networkInterfaces[0].networkIP'
+    gcloud:instance_info $instance | jq --raw-output '.networkInterfaces[0].networkIP'
 }
 
 
-function gcloud_instance_info()
+function gcloud:instance_info()
 {
     local instance_id=$1
     local cache_dir="deployments/$DEPLOYMENT_ID/cache"

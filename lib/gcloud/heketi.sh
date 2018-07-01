@@ -69,6 +69,6 @@ function heketi_get_external_ip()
 
     info "heketi" "Getting external IP from the NAT network interface"
 
-    local ip=$(gcloud_instance_info "$instance_id" | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
+    local ip=$(gcloud:instance_info "$instance_id" | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
     echo $ip
 }

@@ -12,9 +12,9 @@ source lib/functions.sh
   [[ "$result" == "$PREFIX-gluster-$ZONEID-$instance_idx" ]]
 }
 
-@test "gcloud_instance_info" {
+@test "gcloud:instance_info" {
   local instance_idx=1
-  local result="$(gcloud_instance_info aurora-dev-gluster-a-1 | jq --raw-output .networkInterfaces[0].kind)"
+  local result="$(gcloud:instance_info aurora-dev-gluster-a-1 | jq --raw-output .networkInterfaces[0].kind)"
   [[ "$result" =~ "networkInterface" ]]
 }
 

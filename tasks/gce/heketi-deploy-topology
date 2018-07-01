@@ -1,15 +1,27 @@
 #!/bin/bash
 source ./tasks/gce/config
 
-export HEKETI_IP=$(gcloud_instance_external_ip "$HEKETI_INSTANCE")
+
+HEKETI_IMAGE=heketi/heketi
+export HEKETI_IP=$(gcloud:instance_external_ip "$HEKETI_INSTANCE")
+
+if [[ -z $HEKETI_IP ]]
+then
+    echo "HEKETI_IP is not defined."
+    exit 1
+fi
+
 export HEKETI_CLI_SERVER=http://$HEKETI_IP:8080
 export HEKETI_SSH_KEYFILE=/etc/heketi/id_rsa
 export HEKETI_SSH_USER=root
 export HEKETI_SSH_PORT=22
 
+info "heketi" "Pulling docker image..."
+docker pull $HEKETI_IMAGE
+
 info "heketi" "Running heketi-cli topology load"
 docker run -it --rm --entrypoint heketi-cli \
-    --volume $PWD/deployments/$DEPLOYMENT_ID:/data heketi/heketi \
+    --volume $PWD/deployments/$DEPLOYMENT_ID:/data $HEKETI_IMAGE \
     --server $HEKETI_CLI_SERVER topology load --json=/data/topology.json
 
 

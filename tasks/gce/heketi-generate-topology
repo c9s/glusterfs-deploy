@@ -18,7 +18,7 @@ JSON
 
 for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
-    subnet_ip=$(gcloud_instance_info $instance_id | jq --raw-output '.networkInterfaces[0].networkIP')
+    subnet_ip=$(gcloud:instance_info $instance_id | jq --raw-output '.networkInterfaces[0].networkIP')
     patch_file=$(mktemp /tmp/patch.json.XXX)
     cat <<PATCH > $patch_file
     [

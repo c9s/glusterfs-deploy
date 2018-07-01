@@ -6,5 +6,5 @@ mkdir -p deployments/$DEPLOYMENT_ID/cache
 for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     info "$instance_id" "fetching instance info ..."
-    gcloud_instance_info "$instance_id" > /dev/null
+    gcloud:instance_info "$instance_id" > /dev/null
 done
