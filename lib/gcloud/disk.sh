@@ -6,6 +6,11 @@ function gcloud:disk_name()
     echo "$PREFIX-gluster-$ZONEID-disk-$instance_idx-$di"
 }
 
+function gcloud:list_disks()
+{
+    gcloud compute disks list --filter="zone:($ZONE)"
+}
+
 function gcloud:delete_disk()
 {
     local disk_name=$1
