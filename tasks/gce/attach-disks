@@ -10,11 +10,18 @@ do
     instance_id=${GLUSTER_INSTANCES[$i-1]}
     for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
     do
-        disk=$(gcloud:disk_name $i $di)
-        info "$instance_id" "Attaching disk $disk..."
-        gcloud compute instances attach-disk --quiet $instance_id \
-            --mode "rw" \
-            --zone "$ZONE" \
-            --disk "$disk"
+        disk_name=$(gcloud:disk_name $i $di)
+        disk_num_users=$(gcloud compute disks describe $disk_name --format json | jq '.users | length')
+
+        if [[ $disk_num_users == 0 ]] ; then
+            info "$instance_id" "Attaching disk $disk_name..."
+            gcloud compute instances attach-disk --quiet $instance_id \
+                --mode "rw" \
+                --zone "$ZONE" \
+                --disk "$disk_name"
+        else
+            # will be attached like this /dev/disk/by-id/google-persistent-disk-1
+            info "$instance_id" "Disk $disk_name is already attached."
+        fi
     done
 done  

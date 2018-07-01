@@ -61,7 +61,7 @@ function glusterfs_install_client_on()
     kubectl label --overwrite node "$instance" glusterfs=client
 }
 
-function glusterfs_peer_probe()
+function glusterfs:peer_probe()
 {
     local instance_id=$1
     local probe_instance_id=$2
