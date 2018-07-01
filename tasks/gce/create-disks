@@ -12,7 +12,7 @@ for ((i=1; i<=$N; i++))
 do
     for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
     do
-        gcloud_create_disk "$(gcloud:disk_name $i $di)" &
+        gcloud:create_disk "$(gcloud:disk_name $i $di)" &
         pids+=($!)
     done
 done

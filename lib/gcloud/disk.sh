@@ -6,14 +6,14 @@ function gcloud:disk_name()
     echo "$PREFIX-gluster-$ZONEID-disk-$instance_idx-$di"
 }
 
-function delete_disk()
+function gcloud:delete_disk()
 {
     local disk=$1
     gcloud compute disks delete --quiet "$disk"
 }
 
-# gcloud_create_disk "$PREFIX-gluster-$ZONEID-disk-$i"
-function gcloud_create_disk()
+# gcloud:create_disk "$PREFIX-gluster-$ZONEID-disk-$i"
+function gcloud:create_disk()
 {
     local disk=$1
     local zone=$ZONE
@@ -29,7 +29,7 @@ function gcloud_create_disk()
         --type "$DISK_TYPE" > /dev/null
 }
 
-function gcloud_dd_disk()
+function gcloud:dd_disk()
 {
     local instance_id=$1
     local device=$1

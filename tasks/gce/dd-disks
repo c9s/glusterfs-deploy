@@ -5,5 +5,5 @@ source ./tasks/gce/config
 for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     info "$instance_id" "dd zero /dev/sdb ..."
-    gcloud_dd_disk "$instance_id" "/dev/sdb"
+    gcloud:dd_disk "$instance_id" "/dev/sdb"
 done
