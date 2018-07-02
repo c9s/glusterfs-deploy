@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+export DEPLOYMENT_ID=$1
+./tasks/gce/create-disks
+./tasks/gce/attach-disks
+./tasks/gce/heketi-generate-topology
+./tasks/gce/heketi-generate-env
+./tasks/gce/heketi-deploy-topology
