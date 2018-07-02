@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function heketi_init_instance_id()
+function heketi:init_instance_id()
 {
     HEKETI_INSTANCE=$1
 }
