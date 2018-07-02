@@ -45,5 +45,6 @@ cat <<JSON > $TOPOLOGY_JSON_FILE
 }
 JSON
 cat $TOPOLOGY_JSON_FILE | jq ".clusters |= . + $NODE_JSON" > $patch_file
-mv $patch_file $TOPOLOGY_JSON_FILE
+mv $patch_file $TOPOLOGY_JSON_FILE $NODE_JSON_FILE
+rm -rf $DEVICE_JSON_FILE
 cat $TOPOLOGY_JSON_FILE
