@@ -6,8 +6,8 @@ function glusterfs_instance_id()
   echo "$PREFIX-gluster-$ZONEID-$instance_idx"
 }
 
-# glusterfs_init_instance_list init the gluster instance ID list
-function glusterfs_init_instance_list()
+# glusterfs:init_instance_list init the gluster instance ID list
+function glusterfs:init_instance_list()
 {
   for ((i=1; i<=$N; i++))
   do
@@ -30,7 +30,7 @@ function glusterfs_uninstall_on()
 }
 
 
-function glusterfs_init_probe_instance_list()
+function glusterfs:init_probe_instance_list()
 {
     GLUSTER_PROBE_INSTANCES=(${GLUSTER_INSTANCES[@]})
     GLUSTER_PROBE_INSTANCES=(${GLUSTER_PROBE_INSTANCES[@]:1})
