@@ -72,3 +72,20 @@ function heketi_get_external_ip()
     local ip=$(gcloud:instance_info "$instance_id" | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
     echo $ip
 }
+
+
+
+function heketi:install_on()
+{
+    local instance_id=$1
+    info "$instance_id: Installing heketi..."
+    gcloud:ssh_command "$instance_id" "sudo yum -y --quiet install heketi heketi-client"
+}
+
+function gcloud:instance_add_tag()
+{
+    local instance_id=$1
+    shift
+    info "$instance_id" "Adding tags {$*}..."
+    gcloud compute instances add-tags "$instance_id" --tags "$*" --zone "$ZONE"
+}

@@ -7,9 +7,8 @@ fi
 echo Using DEPLOYMENT_ID=$DEPLOYMENT_ID
 mkdir -p deployments/$DEPLOYMENT_ID
 
-N=3
-PREFIX=example
-
+export N=3
+export PREFIX=example
 
 GCP_PROJECT=linker-aurora
 ZONEID=a
@@ -20,6 +19,7 @@ ZONE=asia-east1-$ZONEID
 # https://developers.google.com/compute/docs/disks#performance.
 DISK_SIZE=200GB
 DISK_TYPE=pd-standard
+
 DISK_LABELS="service=glusterfs"
 NUM_DISK_PER_INSTANCE=2
 # DISK_TYPE=pd-ssd
