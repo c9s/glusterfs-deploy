@@ -6,7 +6,7 @@ function gcloud:instance_external_ip()
     gcloud:instance_info $instance | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP'
 }
 
-function gcloud_instance_network_ip()
+function gcloud:instance_network_ip()
 {
     local instance=$1
     gcloud:instance_info $instance | jq --raw-output '.networkInterfaces[0].networkIP'
