@@ -1,6 +1,5 @@
 #!/bin/bash
 source ./tasks/gce/config
-
 export HEKETI_IP=$(gcloud:instance_network_ip $HEKETI_INSTANCE)
 export HEKETI_EXTERNAL_IP=$(gcloud:instance_external_ip $HEKETI_INSTANCE)
 export HEKETI_CLI_SERVER=http://$HEKETI_EXTERNAL_IP:8080

@@ -1,7 +1,6 @@
 #!/bin/bash
 source ./tasks/gce/config
 
-
 HEKETI_IMAGE=heketi/heketi
 export HEKETI_IP=$(gcloud:instance_external_ip "$HEKETI_INSTANCE")
 
@@ -23,5 +22,3 @@ info "heketi" "Running heketi-cli topology load"
 docker run -it --rm --entrypoint heketi-cli \
     --volume $PWD/deployments/$DEPLOYMENT_ID:/data $HEKETI_IMAGE \
     --server $HEKETI_CLI_SERVER topology load --json=/data/topology.json
-
-

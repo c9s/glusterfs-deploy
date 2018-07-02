@@ -1,6 +1,6 @@
 #!/bin/bash
 source ./tasks/gce/config
-
+set -e
 DEVICE_JSON_FILE=deployments/$DEPLOYMENT_ID/heketi-devices.json
 echo '[]' > $DEVICE_JSON_FILE
 declare -a device_paths=()
@@ -9,7 +9,8 @@ do
     device_name="/dev/disk/by-id/google-persistent-disk-$i"
     device_paths+=("$device_name")
     patch_file=$(mktemp $DEVICE_JSON_FILE.XXX)
-    cat $DEVICE_JSON_FILE | jq ". + [{ \"name\": \"$device_name\", \"destroydata\": false }]" > $patch_file
+    # cat $DEVICE_JSON_FILE | jq ". + [{ \"name\": \"$device_name\", \"destroydata\": false }]" > $patch_file
+    cat $DEVICE_JSON_FILE | jq ". + [\"$device_name\"]" > $patch_file
     mv $patch_file $DEVICE_JSON_FILE
 done
 DEVICE_JSON=$(cat $DEVICE_JSON_FILE)
@@ -45,6 +46,6 @@ cat <<JSON > $TOPOLOGY_JSON_FILE
 }
 JSON
 cat $TOPOLOGY_JSON_FILE | jq ".clusters |= . + $NODE_JSON" > $patch_file
-mv $patch_file $TOPOLOGY_JSON_FILE $NODE_JSON_FILE
-rm -rf $DEVICE_JSON_FILE
+mv $patch_file $TOPOLOGY_JSON_FILE
+rm -rf $DEVICE_JSON_FILE $NODE_JSON_FILE
 cat $TOPOLOGY_JSON_FILE
