@@ -3,7 +3,7 @@ source ./tasks/gce/config
 set -e
 
 echo "===> Installing json-patch"
-go get -x github.com/evanphx/json-patch/cmd/json-patch
+go get github.com/evanphx/json-patch/cmd/json-patch
 
 heketi_json_file="deployments/$DEPLOYMENT_ID/heketi.json"
 
