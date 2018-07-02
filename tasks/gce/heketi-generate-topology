@@ -1,50 +1,49 @@
 #!/bin/bash
 source ./tasks/gce/config
 
+DEVICE_JSON_FILE=deployments/$DEPLOYMENT_ID/heketi-devices.json
+echo '[]' > $DEVICE_JSON_FILE
 declare -a device_paths=()
-
 for ((i=1 ; i <= $NUM_DISK_PER_INSTANCE ; i++))
 do
-    device_paths+=($(printf '"%s"' "/dev/disk/by-id/google-persistent-disk-$i"))
+    device_name="/dev/disk/by-id/google-persistent-disk-$i"
+    device_paths+=("$device_name")
+    patch_file=$(mktemp $DEVICE_JSON_FILE.XXX)
+    cat $DEVICE_JSON_FILE | jq ". + [{ \"name\": \"$device_name\", \"destroydata\": false }]" > $patch_file
+    mv $patch_file $DEVICE_JSON_FILE
 done
+DEVICE_JSON=$(cat $DEVICE_JSON_FILE)
 
-
-
-cat <<JSON > deployments/$DEPLOYMENT_ID/topology.json
-{
-    "clusters": [ { "nodes": [ ] } ]
-}
-JSON
+# currently we only support one cluster
+NODE_JSON_FILE=deployments/$DEPLOYMENT_ID/heketi-nodes.json
+echo '[]' > $NODE_JSON_FILE
 
 for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     subnet_ip=$(gcloud:instance_info $instance_id | jq --raw-output '.networkInterfaces[0].networkIP')
     patch_file=$(mktemp /tmp/patch.json.XXX)
-    cat <<PATCH > $patch_file
-    [
-        {
-            "op": "add",
-            "path": "/clusters/0/nodes/-",
-            "value": {
-                "node": {
-                    "zone": 1,
-                    "hostnames": {
-                        "manage": ["$instance_id"],
-                        "storage": ["$subnet_ip"]
-                    }
-                },
-                "devices": [
-                    $(perl -e '$s = shift @ARGV; print join($s, @ARGV);' "," "${device_paths[@]}")
-                ]
-            }
+    cat $NODE_JSON_FILE | jq ". + [{
+        \"node\": {
+            \"zone\": 1,
+            \"hostnames\": {
+                \"manage\": [\"$instance_id\"],
+                \"storage\": [\"$subnet_ip\"]
+            },
+            \"devices\": $DEVICE_JSON
         }
-    ]
-PATCH
-    tmp_file=$(mktemp /tmp/topology.json.XXX)
-
-    cat $(asset topology.json) \
-        | json-patch -p $patch_file \
-        | json_pp > $tmp_file
-    mv -v $tmp_file $(asset topology.json)
+    }]" > $patch_file
+    mv $patch_file $NODE_JSON_FILE
 done
-cat $(asset topology.json)
+NODE_JSON=$(cat $NODE_JSON_FILE)
+
+
+TOPOLOGY_JSON_FILE=deployments/$DEPLOYMENT_ID/topology.json
+patch_file=$(mktemp /tmp/patch.json.XXX)
+cat <<JSON > $TOPOLOGY_JSON_FILE
+{
+    "clusters": []
+}
+JSON
+cat $TOPOLOGY_JSON_FILE | jq ".clusters |= . + $NODE_JSON" > $patch_file
+mv $patch_file $TOPOLOGY_JSON_FILE
+cat $TOPOLOGY_JSON_FILE

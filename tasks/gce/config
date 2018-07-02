@@ -54,7 +54,7 @@ declare -a GLUSTER_PROBE_INSTANCES=()
 
 glusterfs_init_instance_list
 
-heketi_init_instance_id "${GLUSTER_INSTANCES[0]}"
+heketi:init_instance_id "${GLUSTER_INSTANCES[0]}"
 
 glusterfs_init_probe_instance_list
 
