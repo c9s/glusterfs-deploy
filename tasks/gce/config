@@ -26,7 +26,10 @@ NUM_DISK_PER_INSTANCE=2
 
 INSTANCE_TAGS=glusterfs
 MACHINE_TYPE=n1-standard-4
-IMAGE_TYPE=centos-7-v20170620
+
+# gcloud compute images list
+# IMAGE_TYPE=centos-7-v20170620
+IMAGE_TYPE=centos-7-v20180716
 IMAGE_PROJECT=centos-cloud
 BOOTDISK_TYPE=pd-standard
 

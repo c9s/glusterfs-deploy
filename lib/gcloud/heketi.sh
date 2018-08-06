@@ -9,7 +9,7 @@ function heketi:get_config_file()
 {
     local instance_id=$1
     local target=$2
-    info "heketi" "Getting heketi json config..."
+    info "heketi" "Downloading the default heketi json config..."
     gcloud compute scp $instance_id:/etc/heketi/heketi.json $target
 }
 
@@ -21,12 +21,12 @@ function heketi:put_config_file()
 
     info "heketi" "Uploading heketi json config..."
     gcloud compute scp "$target" $instance_id:./heketi.json
+    gcloud compute ssh $instance_id --command "sudo cp -v $HEKETI_KEY_DIR/heketi.json{,bak} \
+        && sudo cp -v heketi.json $HEKETI_KEY_DIR/heketi.json \
+        && sudo chown heketi: $HEKETI_KEY_DIR/heketi.json"
 
     info "heketi" "Restarting heketi server..."
-    gcloud compute ssh $instance_id --command "sudo cp -v heketi.json $HEKETI_KEY_DIR/heketi.json \
-        && sudo chown heketi: $HEKETI_KEY_DIR/heketi.json \
-        && sudo systemctl enable heketi \
-        && sudo systemctl restart heketi"
+    heketi:start_on "$instance_id"
 }
 
 
@@ -73,13 +73,39 @@ function heketi_get_external_ip()
     echo $ip
 }
 
-
+function heketi:start_on()
+{
+    local instance_id=$1
+    info "$instance_id: Starting heketi..."
+    gcloud:ssh_command "$instance_id" "[[ -f /etc/heketi/container_id ]] \
+        && sudo docker stop heketi5 \$(/etc/heketi/container_id) \
+        && sudo docker rm heketi5 \$(/etc/heketi/container_id) \
+        || true"
+    gcloud:ssh_command "$instance_id" "sudo docker run --detach --publish 8080:8080 \
+             --name heketi5 \
+             --restart=always \
+             --volume /etc/heketi:/etc/heketi \
+             --volume /etc/heketi/db:/var/lib/heketi \
+             heketi/heketi:5 | sudo tee /etc/heketi/container_id"
+}
 
 function heketi:install_on()
 {
     local instance_id=$1
+
+    local heketi_version=v5.0.1
+    local heketi_arch=amd64
+    local heketi_os=linux
+
+    info "$instance_id: Installing docker..."
+    gcloud:ssh_command "$instance_id" "sudo yum update -y && sudo yum install -y --quiet docker && sudo systemctl start docker"
+
     info "$instance_id: Installing heketi..."
-    gcloud:ssh_command "$instance_id" "sudo yum -y --quiet install heketi heketi-client"
+    gcloud:ssh_command "$instance_id" "curl -L -O https://github.com/heketi/heketi/releases/download/${heketi_version}/heketi-${heketi_version}.${heketi_os}.${heketi_arch}.tar.gz \
+        && tar xvzf heketi-${heketi_version}.${heketi_os}.${heketi_arch}.tar.gz \
+        && sudo rsync -av heketi/ /etc/heketi/"
+    # we can't install heketi via yum now...
+    # gcloud:ssh_command "$instance_id" "sudo yum update -y && sudo yum -y --quiet install heketi heketi-client"
 }
 
 function gcloud:instance_add_tag()

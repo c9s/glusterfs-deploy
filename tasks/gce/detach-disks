@@ -2,13 +2,18 @@
 source ./tasks/gce/config
 declare -a pids=()
 for ((i=1; i<=$N; i++))
-do  
+do
     instance_id=${GLUSTER_INSTANCES[$i-1]}
-    disk="$PREFIX-gluster-$ZONEID-disk-$i"
-    echo "$instance_id: detach disk $disk"
-    gcloud compute instances detach-disk $instance_id \
-        --disk $disk \
-        --zone $ZONE
-    pids+=($!)
+
+    for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
+    do
+        disk_name=$(gcloud:disk_name $i $di)
+        disk_num_users=$(gcloud compute disks describe $disk_name --format json | jq '.users | length')
+        echo "$instance_id: detach disk $disk_name"
+        gcloud compute instances detach-disk $instance_id \
+            --disk $disk_name \
+            --zone $ZONE
+        pids+=($!)
+    done
 done
 wait "${pids[@]}"

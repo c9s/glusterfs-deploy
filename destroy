@@ -1,4 +1,5 @@
 #!/bin/bash
+export DEPLOYMENT_ID=$1
 # ./tasks/gce/delete-firewall-rules
 ./tasks/gce/uninstall-glusterfsd
 ./tasks/gce/detach-disks

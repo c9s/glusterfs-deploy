@@ -6,7 +6,7 @@ source ./tasks/gce/config
 set -e
 echo "Attaching $NUM_DISK_PER_INSTANCE disks to the $N instances..."
 for ((i=1; i<=$N; i++))
-do  
+do
     instance_id=${GLUSTER_INSTANCES[$i-1]}
     for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
     do
@@ -24,4 +24,4 @@ do
             info "$instance_id" "Disk $disk_name is already attached."
         fi
     done
-done  
+done

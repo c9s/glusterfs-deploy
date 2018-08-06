@@ -4,8 +4,11 @@ source ./tasks/gce/config
 declare -a pids=()
 for ((i=1; i<=$N; i++))
 do
-    disk="$PREFIX-gluster-$ZONEID-disk-$i"
-    gcloud compute disks delete --quiet "$disk" &
-    pids+=($!)
+    for ((di=1; di<=$NUM_DISK_PER_INSTANCE; di++))
+    do
+        disk_name=$(gcloud:disk_name $i $di)
+        gcloud compute disks delete --quiet "$disk_name" &
+        pids+=($!)
+    done
 done
 wait "${pids[@]}"

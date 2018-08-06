@@ -36,7 +36,7 @@ function heketi:generate_kubernetes_storageclass()
         volumetype=none
     fi
     local yaml_file=$(asset kubernetes/01-heketi-sc-$name.yml)
-    # local heketi_ip=$(gcloud:instance_network_ip "$HEKETI_INSTANCE")
+    # local heketi_ip=$(gcloud_instance_network_ip "$HEKETI_INSTANCE")
     local heketi_ip=$(gcloud:instance_external_ip "$HEKETI_INSTANCE")
     local heketi_cli_server=http://$heketi_ip:8080
 
@@ -102,9 +102,7 @@ yaml_files+=($(heketi:generate_kubernetes_storageclass glustersc $GLUSTERFS_VOLU
 yaml_files+=($(heketi:generate_kubernetes_storageclass slow $GLUSTERFS_VOLUME_TYPE))
 yaml_files+=($(heketi:generate_kubernetes_storageclass slow-many $GLUSTERFS_VOLUME_TYPE))
 yaml_files+=($(heketi:generate_kubernetes_storageclass fast-many $GLUSTERFS_VOLUME_TYPE))
-
 for yaml_file in "${yaml_files[@]}"
 do
-    info "kubectl" "applying $yaml_file"
-    kubectl apply -f $yaml_file
+    info "kubectl" "generated $yaml_file"
 done
