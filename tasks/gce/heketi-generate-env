@@ -5,7 +5,7 @@ set -e
 HEKETI_IP=$(gcloud:instance_network_ip $HEKETI_INSTANCE)
 HEKETI_EXTERNAL_IP=$(gcloud:instance_external_ip $HEKETI_INSTANCE)
 cat <<END > deployments/$DEPLOYMENT_ID/heketi.env
-HEKETI_IMAGE=heketi/heketi
+HEKETI_IMAGE=heketi/heketi:5
 HEKETI_IP=$HEKETI_IP
 HEKETI_EXTERNAL_IP=$HEKETI_EXTERNAL_IP
 HEKETI_CLI_SERVER=http://$HEKETI_EXTERNAL_IP:8080
@@ -18,10 +18,10 @@ echo "Generated deployments/$DEPLOYMENT_ID/heketi.env"
 cat <<END > deployments/$DEPLOYMENT_ID/heketi-cli
 #!/bin/bash
 docker run -it --rm \
-    --volume deployments/$DEPLOYMENT_ID:/data \
-    --env-file deployments/$DEPLOYMENT_ID/heketi.env \
+    --volume $PWD/deployments/$DEPLOYMENT_ID:/data \
+    --env-file $PWD/deployments/$DEPLOYMENT_ID/heketi.env \
     --entrypoint heketi-cli \
-    heketi/heketi \$*
+    heketi/heketi:5 \$*
 END
 chmod +x deployments/$DEPLOYMENT_ID/heketi-cli
 echo "Generated deployments/$DEPLOYMENT_ID/heketi-cli"

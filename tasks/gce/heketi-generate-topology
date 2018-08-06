@@ -22,21 +22,21 @@ echo '[]' > $NODE_JSON_FILE
 for instance_id in "${GLUSTER_INSTANCES[@]}"
 do
     subnet_ip=$(gcloud:instance_info $instance_id | jq --raw-output '.networkInterfaces[0].networkIP')
+    external_ip=$(gcloud:instance_info $instance_id | jq --raw-output '.networkInterfaces[0].accessConfigs[0].natIP')
     patch_file=$(mktemp /tmp/patch.json.XXX)
     cat $NODE_JSON_FILE | jq ". + [{
         \"node\": {
-            \"zone\": 1,
             \"hostnames\": {
-                \"manage\": [\"$instance_id\"],
+                \"manage\": [\"$subnet_ip\"],
                 \"storage\": [\"$subnet_ip\"]
             },
-            \"devices\": $DEVICE_JSON
-        }
+            \"zone\": 1
+        },
+        \"devices\": $DEVICE_JSON
     }]" > $patch_file
     mv $patch_file $NODE_JSON_FILE
 done
-NODE_JSON=$(cat $NODE_JSON_FILE)
-
+NODE_JSON="[{ \"nodes\": $(cat $NODE_JSON_FILE) }]"
 
 TOPOLOGY_JSON_FILE=deployments/$DEPLOYMENT_ID/topology.json
 patch_file=$(mktemp /tmp/patch.json.XXX)

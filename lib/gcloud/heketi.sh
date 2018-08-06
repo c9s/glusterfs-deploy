@@ -44,6 +44,8 @@ function heketi:patch_config_file()
     { "op": "replace", "path": "/glusterfs/sshexec/port", "value": "22" },
     { "op": "replace", "path": "/glusterfs/sshexec/fstab", "value": "/etc/fstab" },
     { "op": "replace", "path": "/glusterfs/executor", "value": "ssh" },
+    { "op": "replace", "path": "/glusterfs/loglevel", "value": "debug" },
+    { "op": "replace", "path": "/glusterfs/db", "value": "/var/lib/heketi/heketi.db" },
     { "op": "replace", "path": "/jwt/user/key", "value": "$HEKETI_JWT_USER_SECRET" },
     { "op": "replace", "path": "/jwt/admin/key", "value": "$HEKETI_JWT_ADMIN_SECRET" }
 ]
@@ -81,11 +83,14 @@ function heketi:start_on()
         && sudo docker stop heketi5 \$(/etc/heketi/container_id) \
         && sudo docker rm heketi5 \$(/etc/heketi/container_id) \
         || true"
-    gcloud:ssh_command "$instance_id" "sudo docker run --detach --publish 8080:8080 \
+    gcloud:ssh_command "$instance_id" "\
+            sudo mkdir -p /var/lib/heketi /etc/heketi \
+            && sudo docker run --detach --publish 8080:8080 \
              --name heketi5 \
              --restart=always \
+             --privileged \
              --volume /etc/heketi:/etc/heketi \
-             --volume /etc/heketi/db:/var/lib/heketi \
+             --volume /var/lib/heketi:/var/lib/heketi \
              heketi/heketi:5 | sudo tee /etc/heketi/container_id"
 }
 
@@ -96,12 +101,13 @@ function heketi:install_on()
     local heketi_version=v5.0.1
     local heketi_arch=amd64
     local heketi_os=linux
+    local heketi_tarfile=heketi-${heketi_version}.${heketi_os}.${heketi_arch}.tar.gz
 
     info "$instance_id: Installing docker..."
     gcloud:ssh_command "$instance_id" "sudo yum update -y && sudo yum install -y --quiet docker && sudo systemctl start docker"
 
     info "$instance_id: Installing heketi..."
-    gcloud:ssh_command "$instance_id" "curl -L -O https://github.com/heketi/heketi/releases/download/${heketi_version}/heketi-${heketi_version}.${heketi_os}.${heketi_arch}.tar.gz \
+    gcloud:ssh_command "$instance_id" "([[ ! -f $heketi_tarfile ]] && curl -L -O https://github.com/heketi/heketi/releases/download/${heketi_version}/heketi-${heketi_version}.${heketi_os}.${heketi_arch}.tar.gz || true) \
         && tar xvzf heketi-${heketi_version}.${heketi_os}.${heketi_arch}.tar.gz \
         && sudo rsync -av heketi/ /etc/heketi/"
     # we can't install heketi via yum now...
