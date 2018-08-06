@@ -7,8 +7,8 @@ fi
 echo Using DEPLOYMENT_ID=$DEPLOYMENT_ID
 mkdir -p deployments/$DEPLOYMENT_ID
 
-export N=3
-export PREFIX=example
+N=3
+PREFIX=example
 
 GCP_PROJECT=linker-aurora
 ZONEID=a
@@ -25,12 +25,11 @@ NUM_DISK_PER_INSTANCE=2
 # DISK_TYPE=pd-ssd
 
 INSTANCE_TAGS=glusterfs
-MACHINE_TYPE=n1-standard-1
+MACHINE_TYPE=n1-standard-4
 IMAGE_TYPE=centos-7-v20170620
 IMAGE_PROJECT=centos-cloud
 BOOTDISK_TYPE=pd-standard
 BOOTDISK_SIZE=100GB
-
 
 #####################################################
 # HEKETI RELATED CONFIG
