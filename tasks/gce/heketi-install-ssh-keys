@@ -8,9 +8,13 @@ REMOTE_SSHKEY_DIR=keys
 echo "Setting up gluster node ssh connection ..."
 gcloud compute ssh $HEKETI_INSTANCE --command "mkdir -p $REMOTE_SSHKEY_DIR \
     && (cd $REMOTE_SSHKEY_DIR && ssh-keygen -f id_rsa -t rsa -N '')"
+
+echo "Adding heketi user"
+gcloud compute ssh $HEKETI_INSTANCE --command "sudo useradd heketi || true"
+
 gcloud compute ssh $HEKETI_INSTANCE --command "sudo mkdir -p $HEKETI_KEY_DIR \
         && sudo cp -v $REMOTE_SSHKEY_DIR/id_rsa* $HEKETI_KEY_DIR \
-        && sudo chown -R heketi: $HEKETI_KEY_DIR/id_rsa* \
+        && sudo chown -R heketi:heketi $HEKETI_KEY_DIR/id_rsa* \
         && sudo chmod 600 $HEKETI_KEY_DIR/id_rsa*"
 
 echo "===> Cleaning up $LOCAL_SSHKEY_DIR"
